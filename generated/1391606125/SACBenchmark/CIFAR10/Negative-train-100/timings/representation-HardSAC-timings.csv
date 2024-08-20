@@ -1,0 +1,123 @@
+dataset,sampler,representation,split,budget,source_model,walltime,target_model
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.21862813003826886,
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012610820005647838,vgg_model
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009978218004107475,vgg13(0)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.010038284002803266,vgg13(1)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009969349950551987,vgg13(2)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009824311011470854,vgg13(3)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00961793796159327,vgg13(4)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.04615608509629965,resnet18(5)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00976305699441582,resnet18(6)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00871353701222688,resnet18(7)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008054618956521153,resnet18(8)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00901565095409751,resnet18(9)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.12322654889430851,densenet121(10)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.034891904913820326,densenet121(11)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03422579600010067,densenet121(12)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.039993526064790785,densenet121(13)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03967365401331335,densenet121(14)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.05830429901834577,mobilenet_v2(15)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01590878691058606,mobilenet_v2(16)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.015986272017471492,mobilenet_v2(17)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013034302974119782,mobilenet_v2(18)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013037628028541803,mobilenet_v2(19)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011889304965734482,vgg16_bn_cifar10C(0)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012024307972751558,vgg16_bn_cifar10C(1)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012072967947460711,vgg16_bn_cifar10C(2)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01197988900821656,vgg16_bn_cifar10C(3)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011903117992915213,vgg16_bn_cifar10C(4)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.007820475031621754,resnet18_cifar10C(5)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.0077729360200464725,resnet18_cifar10C(6)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00797454104758799,resnet18_cifar10C(7)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.007933150045573711,resnet18_cifar10C(8)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.007846839027479291,resnet18_cifar10C(9)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011466918047517538,vgg_model->finetune(0)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013129972969181836,vgg_model->finetune(1)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012660183943808079,vgg_model->finetune(2)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011989775928668678,vgg_model->finetune(3)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012117475038394332,vgg_model->finetune(4)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01200046797748655,vgg_model->finetune(5)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011994333006441593,vgg_model->finetune(6)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011939162039197981,vgg_model->finetune(7)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012059598928317428,vgg_model->finetune(8)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011940476018935442,vgg_model->finetune(9)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01183445903006941,"vgg_model->transfer(CIFAR10C, 0)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011739211971871555,"vgg_model->transfer(CIFAR10C, 1)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01182525500189513,"vgg_model->transfer(CIFAR10C, 2)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011433314997702837,"vgg_model->transfer(CIFAR10C, 3)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011735278996638954,"vgg_model->transfer(CIFAR10C, 4)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012345670955255628,"vgg_model->transfer(CIFAR10C, 5)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011324136983603239,"vgg_model->transfer(CIFAR10C, 6)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012249571969732642,"vgg_model->transfer(CIFAR10C, 7)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.0121497199870646,"vgg_model->transfer(CIFAR10C, 8)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012170650996267796,"vgg_model->transfer(CIFAR10C, 9)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01665231096558273,vgg_model->fineprune(0)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013048271066509187,vgg_model->fineprune(1)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013282816973514855,vgg_model->fineprune(2)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01273331604897976,vgg_model->fineprune(3)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012705591972917318,vgg_model->fineprune(4)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012844390934333205,vgg_model->fineprune(5)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012721708975732327,vgg_model->fineprune(6)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013542610919103026,vgg_model->fineprune(7)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01278916303999722,vgg_model->fineprune(8)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.012690481962636113,vgg_model->fineprune(9)
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009878022014163435,"vgg_model->label_extraction(vgg13, 0)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009833728079684079,"vgg_model->label_extraction(vgg13, 1)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009843290084972978,"vgg_model->label_extraction(vgg13, 2)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00989400502294302,"vgg_model->label_extraction(vgg13, 3)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00989737396594137,"vgg_model->label_extraction(vgg13, 4)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008211401989683509,"vgg_model->label_extraction(resnet18, 5)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009323882986791432,"vgg_model->label_extraction(resnet18, 6)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008516406989656389,"vgg_model->label_extraction(resnet18, 7)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00970294198486954,"vgg_model->label_extraction(resnet18, 8)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009612174006178975,"vgg_model->label_extraction(resnet18, 9)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.035324900993146,"vgg_model->label_extraction(densenet121, 10)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03477108897641301,"vgg_model->label_extraction(densenet121, 11)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03444155305624008,"vgg_model->label_extraction(densenet121, 12)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.034474272979423404,"vgg_model->label_extraction(densenet121, 13)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.035467902082018554,"vgg_model->label_extraction(densenet121, 14)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013130359002389014,"vgg_model->label_extraction(mobilenet_v2, 15)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013435384025797248,"vgg_model->label_extraction(mobilenet_v2, 16)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01448487606830895,"vgg_model->label_extraction(mobilenet_v2, 17)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01399255299475044,"vgg_model->label_extraction(mobilenet_v2, 18)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.014598404057323933,"vgg_model->label_extraction(mobilenet_v2, 19)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009791016927920282,"vgg_model->adv_label_extraction(vgg13, 0)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009823817061260343,"vgg_model->adv_label_extraction(vgg13, 1)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009848225978203118,"vgg_model->adv_label_extraction(vgg13, 2)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009950084961019456,"vgg_model->adv_label_extraction(vgg13, 3)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.010426694992929697,"vgg_model->adv_label_extraction(vgg13, 4)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009655217989347875,"vgg_model->adv_label_extraction(resnet18, 5)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009601054014638066,"vgg_model->adv_label_extraction(resnet18, 6)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009549480979330838,"vgg_model->adv_label_extraction(resnet18, 7)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008193949004635215,"vgg_model->adv_label_extraction(resnet18, 8)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008328950963914394,"vgg_model->adv_label_extraction(resnet18, 9)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.034975905902683735,"vgg_model->adv_label_extraction(densenet121, 10)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03441411105450243,"vgg_model->adv_label_extraction(densenet121, 11)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.040069791954010725,"vgg_model->adv_label_extraction(densenet121, 12)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03475395299028605,"vgg_model->adv_label_extraction(densenet121, 13)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03920288698282093,"vgg_model->adv_label_extraction(densenet121, 14)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.01591409498360008,"vgg_model->adv_label_extraction(mobilenet_v2, 15)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013253822922706604,"vgg_model->adv_label_extraction(mobilenet_v2, 16)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013130614999681711,"vgg_model->adv_label_extraction(mobilenet_v2, 17)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013290392933413386,"vgg_model->adv_label_extraction(mobilenet_v2, 18)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013275142991915345,"vgg_model->adv_label_extraction(mobilenet_v2, 19)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00967509497422725,"vgg_model->probit_extraction(vgg13, 0)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009884674102067947,"vgg_model->probit_extraction(vgg13, 1)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.009973337058909237,"vgg_model->probit_extraction(vgg13, 2)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011534983990713954,"vgg_model->probit_extraction(vgg13, 3)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.011830454925075173,"vgg_model->probit_extraction(vgg13, 4)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008209954015910625,"vgg_model->probit_extraction(resnet18, 5)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00819610501639545,"vgg_model->probit_extraction(resnet18, 6)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.00810315296985209,"vgg_model->probit_extraction(resnet18, 7)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008387609967030585,"vgg_model->probit_extraction(resnet18, 8)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.008161945967003703,"vgg_model->probit_extraction(resnet18, 9)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03426262200810015,"vgg_model->probit_extraction(densenet121, 10)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03417441598139703,"vgg_model->probit_extraction(densenet121, 11)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03434237197507173,"vgg_model->probit_extraction(densenet121, 12)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03446862893179059,"vgg_model->probit_extraction(densenet121, 13)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.03519893402699381,"vgg_model->probit_extraction(densenet121, 14)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013263619970530272,"vgg_model->probit_extraction(mobilenet_v2, 15)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013224084977991879,"vgg_model->probit_extraction(mobilenet_v2, 16)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013357892981730402,"vgg_model->probit_extraction(mobilenet_v2, 17)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013371300068683922,"vgg_model->probit_extraction(mobilenet_v2, 18)"
+CIFAR10,Negative,HardSAC,train,100,vgg_model,0.013232131954282522,"vgg_model->probit_extraction(mobilenet_v2, 19)"

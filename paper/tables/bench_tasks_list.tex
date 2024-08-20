@@ -1,0 +1,26 @@
+\begin{table}[t]
+\small
+\centering
+\caption{Stealing and obfuscation methods implemented by different benchmarks.}
+\label{tab:bench_tasks}
+\begin{tabular}{@{}p{1cm} p{1cm} p{1.4cm} p{1.4cm} p{1.4cm}@{}}
+\toprule
+ &  & ModelReuse
+Flower102 & ModelReuse
+SDog120 & SACBench
+CIFAR10 \\
+\midrule
+\multirow[c]{5}{*}{model leak} & same & \checkmark & \checkmark & \checkmark \\
+ & quantize & \checkmark & \checkmark & $\times$ \\
+ & finetune & $\times$ & $\times$ & \checkmark \\
+ & transfer & $\times$ & $\times$ & \checkmark \\
+ & prune & \checkmark & \checkmark & \checkmark \\
+\cline{1-5}
+\multirow[c]{2}{*}{Label extraction} & vanilla & \checkmark & \checkmark & \checkmark \\
+ & adversarial & $\times$ & $\times$ & \checkmark \\
+\cline{1-5}
+Probit extraction & vanilla & \checkmark & \checkmark & \checkmark \\
+\cline{1-5}
+\bottomrule
+\end{tabular}
+\end{table}

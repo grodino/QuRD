@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\small
+\centering
+\caption{$\text{TPR}@0.05$ of the existing fingerprints with a budget of 100 queries. For each task, the best performance are highlighted.}
+\label{tab:task_perf}
+\begin{tabular}{l|lllll|ll|l}
+\toprule
+ & \multicolumn{5}{c}{model leak} & Probit extraction & \multicolumn{2}{c}{Label extraction} \\
+Fingerprint & same & quantize & finetune & transfer & prune & vanilla & vanilla & adversarial \\
+\midrule
+AKH baseline (ours) & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & 0.91 ± \scriptsize.01 & 0.78 ± \scriptsize.01 & 0.46 ± \scriptsize.01 & 0.92 ± \scriptsize.03 \\
+IPGuard & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 0.94 ± \scriptsize.01 & 0.64 ± \scriptsize.02 & 0.12 ± \scriptsize0 & 0.02 ± \scriptsize.01 \\
+ModelDiff & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 0.94 ± \scriptsize.01 & 0.59 ± \scriptsize.05 & 0.15 ± \scriptsize.02 & 0.16 ± \scriptsize.07 \\
+Random Sampling & \bfseries 1.0 ± \scriptsize0 & 0.93 ± \scriptsize.03 & \bfseries 1.0 ± \scriptsize0 & 0.48 ± \scriptsize.2 & 0.71 ± \scriptsize.02 & 0.46 ± \scriptsize.01 & 0.07 ± \scriptsize.02 & 0.06 ± \scriptsize.05 \\
+SAC & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & 0.92 ± \scriptsize0 & \bfseries 0.81 ± \scriptsize0 & \bfseries 0.59 ± \scriptsize.02 & \bfseries 1.0 ± \scriptsize0 \\
+ZestOfLime & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & \bfseries 1.0 ± \scriptsize0 & 0.78 ± \scriptsize.17 & 0.86 ± \scriptsize0 & 0.74 ± \scriptsize.02 & 0.38 ± \scriptsize.05 & 0.29 ± \scriptsize.11 \\
+\bottomrule
+\end{tabular}
+\end{table*}

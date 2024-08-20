@@ -1,0 +1,123 @@
+dataset,sampler,representation,split,budget,source_model,walltime,target_model
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,4.152001022011973,
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024089368991553783,vgg_model
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.020168627030216157,vgg13(0)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01928947598207742,vgg13(1)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01851661002729088,vgg13(2)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019077614066191018,vgg13(3)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.018380300025455654,vgg13(4)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.7055248089600354,resnet18(5)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016925067990086973,resnet18(6)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016948256990872324,resnet18(7)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0169877540320158,resnet18(8)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016946811927482486,resnet18(9)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.5456063699675724,densenet121(10)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08182473003398627,densenet121(11)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08252144092693925,densenet121(12)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08169538201764226,densenet121(13)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08203436201438308,densenet121(14)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.12119997094850987,mobilenet_v2(15)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03085067099891603,mobilenet_v2(16)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030831577023491263,mobilenet_v2(17)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03079279698431492,mobilenet_v2(18)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.031106464099138975,mobilenet_v2(19)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.022252452094107866,vgg16_bn_cifar10C(0)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02242906903848052,vgg16_bn_cifar10C(1)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.022255304967984557,vgg16_bn_cifar10C(2)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.022283122059889138,vgg16_bn_cifar10C(3)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.022397521999664605,vgg16_bn_cifar10C(4)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016935906023718417,resnet18_cifar10C(5)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016933670034632087,resnet18_cifar10C(6)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017045792075805366,resnet18_cifar10C(7)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016953574027866125,resnet18_cifar10C(8)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016969193005934358,resnet18_cifar10C(9)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024305063067004085,vgg_model->finetune(0)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024027981096878648,vgg_model->finetune(1)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02400854998268187,vgg_model->finetune(2)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02405526104848832,vgg_model->finetune(3)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023995682946406305,vgg_model->finetune(4)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02425371902063489,vgg_model->finetune(5)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024091636994853616,vgg_model->finetune(6)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024066861951723695,vgg_model->finetune(7)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024196936981752515,vgg_model->finetune(8)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023634806042537093,vgg_model->finetune(9)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023642098996788263,"vgg_model->transfer(CIFAR10C, 0)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023684303974732757,"vgg_model->transfer(CIFAR10C, 1)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02332726097665727,"vgg_model->transfer(CIFAR10C, 2)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023729462060146034,"vgg_model->transfer(CIFAR10C, 3)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0235129299107939,"vgg_model->transfer(CIFAR10C, 4)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023329308023676276,"vgg_model->transfer(CIFAR10C, 5)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024201441905461252,"vgg_model->transfer(CIFAR10C, 6)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024064939003437757,"vgg_model->transfer(CIFAR10C, 7)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.023991500958800316,"vgg_model->transfer(CIFAR10C, 8)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.024055736023001373,"vgg_model->transfer(CIFAR10C, 9)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.18207665102090687,vgg_model->fineprune(0)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.025447665015235543,vgg_model->fineprune(1)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02588239894248545,vgg_model->fineprune(2)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.025630041025578976,vgg_model->fineprune(3)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.025488067069090903,vgg_model->fineprune(4)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.02543341799173504,vgg_model->fineprune(5)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.025448346976190805,vgg_model->fineprune(6)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0255641519324854,vgg_model->fineprune(7)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.025435200077481568,vgg_model->fineprune(8)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0267387090716511,vgg_model->fineprune(9)
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01948178093880415,"vgg_model->label_extraction(vgg13, 0)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019362865015864372,"vgg_model->label_extraction(vgg13, 1)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0194936899933964,"vgg_model->label_extraction(vgg13, 2)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019391729030758142,"vgg_model->label_extraction(vgg13, 3)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019395394949242473,"vgg_model->label_extraction(vgg13, 4)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017544177011586726,"vgg_model->label_extraction(resnet18, 5)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017553822952322662,"vgg_model->label_extraction(resnet18, 6)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017466878052800894,"vgg_model->label_extraction(resnet18, 7)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017466675024479628,"vgg_model->label_extraction(resnet18, 8)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017435000045225024,"vgg_model->label_extraction(resnet18, 9)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08325004100333899,"vgg_model->label_extraction(densenet121, 10)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08230599400121719,"vgg_model->label_extraction(densenet121, 11)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.083018510020338,"vgg_model->label_extraction(densenet121, 12)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08391066594049335,"vgg_model->label_extraction(densenet121, 13)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08231319207698107,"vgg_model->label_extraction(densenet121, 14)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030810149968601763,"vgg_model->label_extraction(mobilenet_v2, 15)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030749329016543925,"vgg_model->label_extraction(mobilenet_v2, 16)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030753343948163092,"vgg_model->label_extraction(mobilenet_v2, 17)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030633285990916193,"vgg_model->label_extraction(mobilenet_v2, 18)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030900140991434455,"vgg_model->label_extraction(mobilenet_v2, 19)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01948488806374371,"vgg_model->adv_label_extraction(vgg13, 0)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019323388929478824,"vgg_model->adv_label_extraction(vgg13, 1)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.018961299094371498,"vgg_model->adv_label_extraction(vgg13, 2)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01900134899187833,"vgg_model->adv_label_extraction(vgg13, 3)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0188201570417732,"vgg_model->adv_label_extraction(vgg13, 4)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017286794958636165,"vgg_model->adv_label_extraction(resnet18, 5)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01763603393919766,"vgg_model->adv_label_extraction(resnet18, 6)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017264736001379788,"vgg_model->adv_label_extraction(resnet18, 7)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017368291039019823,"vgg_model->adv_label_extraction(resnet18, 8)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017301285988651216,"vgg_model->adv_label_extraction(resnet18, 9)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08258669392671436,"vgg_model->adv_label_extraction(densenet121, 10)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0822406739462167,"vgg_model->adv_label_extraction(densenet121, 11)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08329420606605709,"vgg_model->adv_label_extraction(densenet121, 12)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08507560507860035,"vgg_model->adv_label_extraction(densenet121, 13)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08185661397874355,"vgg_model->adv_label_extraction(densenet121, 14)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030817158054560423,"vgg_model->adv_label_extraction(mobilenet_v2, 15)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03092271590139717,"vgg_model->adv_label_extraction(mobilenet_v2, 16)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03078671102412045,"vgg_model->adv_label_extraction(mobilenet_v2, 17)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030938229989260435,"vgg_model->adv_label_extraction(mobilenet_v2, 18)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030882833059877157,"vgg_model->adv_label_extraction(mobilenet_v2, 19)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.019519960042089224,"vgg_model->probit_extraction(vgg13, 0)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.018809442990459502,"vgg_model->probit_extraction(vgg13, 1)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01850826304871589,"vgg_model->probit_extraction(vgg13, 2)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.018462182953953743,"vgg_model->probit_extraction(vgg13, 3)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01844443508889526,"vgg_model->probit_extraction(vgg13, 4)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01708308095112443,"vgg_model->probit_extraction(resnet18, 5)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.016974537051282823,"vgg_model->probit_extraction(resnet18, 6)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01695350999943912,"vgg_model->probit_extraction(resnet18, 7)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.017029651906341314,"vgg_model->probit_extraction(resnet18, 8)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.01700723695103079,"vgg_model->probit_extraction(resnet18, 9)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.0833721769740805,"vgg_model->probit_extraction(densenet121, 10)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08268812298774719,"vgg_model->probit_extraction(densenet121, 11)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08537478698417544,"vgg_model->probit_extraction(densenet121, 12)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08309790294151753,"vgg_model->probit_extraction(densenet121, 13)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.08185320300981402,"vgg_model->probit_extraction(densenet121, 14)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03084137395489961,"vgg_model->probit_extraction(mobilenet_v2, 15)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030742078903131187,"vgg_model->probit_extraction(mobilenet_v2, 16)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03078296093735844,"vgg_model->probit_extraction(mobilenet_v2, 17)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.03091432701330632,"vgg_model->probit_extraction(mobilenet_v2, 18)"
+CIFAR10,Adversarial,HardDDV,train,200,vgg_model,0.030795919941738248,"vgg_model->probit_extraction(mobilenet_v2, 19)"

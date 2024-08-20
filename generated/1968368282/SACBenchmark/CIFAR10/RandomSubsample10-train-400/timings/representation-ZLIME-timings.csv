@@ -1,0 +1,123 @@
+dataset,sampler,representation,split,budget,source_model,walltime,target_model
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.3426822869805619,
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05663073295727372,vgg_model
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04587788402568549,vgg13(0)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04596653091721237,vgg13(1)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04596259293612093,vgg13(2)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04621155001223087,vgg13(3)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04595091100782156,vgg13(4)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.08252505899872631,resnet18(5)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04093288094736636,resnet18(6)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04089251800905913,resnet18(7)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04101764899678528,resnet18(8)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04105503601022065,resnet18(9)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.21360311401076615,densenet121(10)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.13151551701594144,densenet121(11)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.12813243502750993,densenet121(12)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1267657830612734,densenet121(13)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.12726535892579705,densenet121(14)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.08875662204809487,mobilenet_v2(15)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.057545203948393464,mobilenet_v2(16)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05762136296834797,mobilenet_v2(17)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.057706471998244524,mobilenet_v2(18)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05782395391725004,mobilenet_v2(19)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05390569008886814,vgg16_bn_cifar10C(0)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05425913305953145,vgg16_bn_cifar10C(1)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0539089780068025,vgg16_bn_cifar10C(2)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.054785999935120344,vgg16_bn_cifar10C(3)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05410209100227803,vgg16_bn_cifar10C(4)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04142615001183003,resnet18_cifar10C(5)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04137188498862088,resnet18_cifar10C(6)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.041283281054347754,resnet18_cifar10C(7)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04149963101372123,resnet18_cifar10C(8)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04178541409783065,resnet18_cifar10C(9)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05418710701633245,vgg_model->finetune(0)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05389661598019302,vgg_model->finetune(1)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.057172039058059454,vgg_model->finetune(2)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05741935397963971,vgg_model->finetune(3)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05392083793412894,vgg_model->finetune(4)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.054093956016004086,vgg_model->finetune(5)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05395723704714328,vgg_model->finetune(6)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05445503105875105,vgg_model->finetune(7)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05395273503381759,vgg_model->finetune(8)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.053952376008965075,vgg_model->finetune(9)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05412397300824523,"vgg_model->transfer(CIFAR10C, 0)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05396695004310459,"vgg_model->transfer(CIFAR10C, 1)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05477952095679939,"vgg_model->transfer(CIFAR10C, 2)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.054859773023054004,"vgg_model->transfer(CIFAR10C, 3)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05408017593435943,"vgg_model->transfer(CIFAR10C, 4)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05425146804191172,"vgg_model->transfer(CIFAR10C, 5)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05393578391522169,"vgg_model->transfer(CIFAR10C, 6)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05405312299262732,"vgg_model->transfer(CIFAR10C, 7)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05432564299553633,"vgg_model->transfer(CIFAR10C, 8)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05389225797262043,"vgg_model->transfer(CIFAR10C, 9)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05685256700962782,vgg_model->fineprune(0)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05640772997867316,vgg_model->fineprune(1)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05667545099277049,vgg_model->fineprune(2)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0621961469296366,vgg_model->fineprune(3)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.065455685951747,vgg_model->fineprune(4)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.06545788608491421,vgg_model->fineprune(5)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.06551258091349155,vgg_model->fineprune(6)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.06541226000990719,vgg_model->fineprune(7)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.06640891800634563,vgg_model->fineprune(8)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.06485311803407967,vgg_model->fineprune(9)
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05273255705833435,"vgg_model->label_extraction(vgg13, 0)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05348284903448075,"vgg_model->label_extraction(vgg13, 1)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05294930096715689,"vgg_model->label_extraction(vgg13, 2)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.052700396976433694,"vgg_model->label_extraction(vgg13, 3)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05294209998100996,"vgg_model->label_extraction(vgg13, 4)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05015759507659823,"vgg_model->label_extraction(resnet18, 5)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0507680200971663,"vgg_model->label_extraction(resnet18, 6)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.049882728955708444,"vgg_model->label_extraction(resnet18, 7)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04982764401938766,"vgg_model->label_extraction(resnet18, 8)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05000239796936512,"vgg_model->label_extraction(resnet18, 9)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15714948205277324,"vgg_model->label_extraction(densenet121, 10)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15646496892441064,"vgg_model->label_extraction(densenet121, 11)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1567633510567248,"vgg_model->label_extraction(densenet121, 12)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15876072901301086,"vgg_model->label_extraction(densenet121, 13)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15822903800290078,"vgg_model->label_extraction(densenet121, 14)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07272542791906744,"vgg_model->label_extraction(mobilenet_v2, 15)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07262242189608514,"vgg_model->label_extraction(mobilenet_v2, 16)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07284101797267795,"vgg_model->label_extraction(mobilenet_v2, 17)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07377281109802425,"vgg_model->label_extraction(mobilenet_v2, 18)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07217151601798832,"vgg_model->label_extraction(mobilenet_v2, 19)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05259075993672013,"vgg_model->adv_label_extraction(vgg13, 0)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05230343097355217,"vgg_model->adv_label_extraction(vgg13, 1)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05258799297735095,"vgg_model->adv_label_extraction(vgg13, 2)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0523335849866271,"vgg_model->adv_label_extraction(vgg13, 3)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05316493101418018,"vgg_model->adv_label_extraction(vgg13, 4)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.049846848007291555,"vgg_model->adv_label_extraction(resnet18, 5)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04967322095762938,"vgg_model->adv_label_extraction(resnet18, 6)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04974094801582396,"vgg_model->adv_label_extraction(resnet18, 7)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04979151696898043,"vgg_model->adv_label_extraction(resnet18, 8)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.049650227068923414,"vgg_model->adv_label_extraction(resnet18, 9)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15706419700291008,"vgg_model->adv_label_extraction(densenet121, 10)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1593410799978301,"vgg_model->adv_label_extraction(densenet121, 11)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.16012974397744983,"vgg_model->adv_label_extraction(densenet121, 12)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15804055600892752,"vgg_model->adv_label_extraction(densenet121, 13)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1634839450707659,"vgg_model->adv_label_extraction(densenet121, 14)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07215369201730937,"vgg_model->adv_label_extraction(mobilenet_v2, 15)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0721921989461407,"vgg_model->adv_label_extraction(mobilenet_v2, 16)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07212247990537435,"vgg_model->adv_label_extraction(mobilenet_v2, 17)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07211029401514679,"vgg_model->adv_label_extraction(mobilenet_v2, 18)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07218951801769435,"vgg_model->adv_label_extraction(mobilenet_v2, 19)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05195382994133979,"vgg_model->probit_extraction(vgg13, 0)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05145393300335854,"vgg_model->probit_extraction(vgg13, 1)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05157280503772199,"vgg_model->probit_extraction(vgg13, 2)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05146655300632119,"vgg_model->probit_extraction(vgg13, 3)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0548067269846797,"vgg_model->probit_extraction(vgg13, 4)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.049895312055014074,"vgg_model->probit_extraction(resnet18, 5)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.05189341295044869,"vgg_model->probit_extraction(resnet18, 6)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.049307490000501275,"vgg_model->probit_extraction(resnet18, 7)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04947052197530866,"vgg_model->probit_extraction(resnet18, 8)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.04948194895405322,"vgg_model->probit_extraction(resnet18, 9)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1569276280933991,"vgg_model->probit_extraction(densenet121, 10)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15764312399551272,"vgg_model->probit_extraction(densenet121, 11)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.16361865994986147,"vgg_model->probit_extraction(densenet121, 12)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.15695750201120973,"vgg_model->probit_extraction(densenet121, 13)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.1562373370397836,"vgg_model->probit_extraction(densenet121, 14)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.0726717229699716,"vgg_model->probit_extraction(mobilenet_v2, 15)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07244014600291848,"vgg_model->probit_extraction(mobilenet_v2, 16)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07216235809028149,"vgg_model->probit_extraction(mobilenet_v2, 17)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07189233903773129,"vgg_model->probit_extraction(mobilenet_v2, 18)"
+CIFAR10,RandomSubsample10,ZLIME,train,400,vgg_model,0.07222910597920418,"vgg_model->probit_extraction(mobilenet_v2, 19)"
