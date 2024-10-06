@@ -2,16 +2,11 @@
 
 import torch
 import torch.nn as nn
-from torch.utils.model_zoo import load_url as load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
 
 __all__ = [
     "ResNet",
-    "resnet18",
-    "resnet34",
-    "resnet50",
-    "resnet101",
-    "resnet152",
     "resnext50_32x4d",
     "resnext101_32x8d",
     "wide_resnet50_2",
@@ -158,8 +153,8 @@ class ResNet(nn.Module):
 
     def __init__(
         self,
-        block,
-        layers,
+        block=BasicBlock,
+        layers=[2, 2, 2, 2],
         num_classes=1000,
         zero_init_residual=False,
         groups=1,
@@ -168,8 +163,13 @@ class ResNet(nn.Module):
         norm_layer=None,
         dropout=0.0,
         haslinear=False,
+        config=None,
     ):
         super(ResNet, self).__init__()
+
+        if config:
+            self.pretrained_cfg = config["pretrained_cfg"]
+
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
@@ -301,7 +301,7 @@ class ResNet(nn.Module):
         return self._forward_impl(x)
 
 
-def _resnet(arch, block, layers, pretrained, progress, **kwargs):
+def _resnet(arch, block, layers, pretrained, progress, **kwargs) -> ResNet:
     model = ResNet(block, layers, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
@@ -314,7 +314,7 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     return model
 
 
-def resnet18_dropout(pretrained=False, progress=True, **kwargs):
+def resnet18_dropout(pretrained=False, progress=True, **kwargs) -> ResNet:
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:
@@ -328,7 +328,7 @@ def resnet18_dropout(pretrained=False, progress=True, **kwargs):
         pretrained,
         progress,
         haslinear=True,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -346,7 +346,7 @@ def resnet34_dropout(pretrained=False, progress=True, **kwargs):
         pretrained,
         progress,
         haslinear=True,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -364,7 +364,7 @@ def resnet50_dropout(pretrained=False, progress=True, **kwargs):
         pretrained,
         progress,
         haslinear=True,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -382,7 +382,7 @@ def resnet101_dropout(pretrained=False, progress=True, **kwargs):
         pretrained,
         progress,
         haslinear=True,
-        **kwargs
+        **kwargs,
     )
 
 

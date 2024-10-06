@@ -2,10 +2,9 @@
 
 import torch
 from torch import nn
-from torch.utils.model_zoo import load_url as load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
-
-__all__ = ["MobileNetV2", "mobilenet_v2"]
+__all__ = ["MobileNetV2", "mbnetv2_dropout"]
 
 
 model_urls = {
@@ -92,6 +91,7 @@ class MobileNetV2(nn.Module):
         dropout=0,
         haslinear=False,
         block=None,
+        config=None,
     ):
         """
         MobileNet V2 main class
@@ -104,6 +104,9 @@ class MobileNetV2(nn.Module):
             block: Module specifying inverted residual building block for mobilenet
         """
         super(MobileNetV2, self).__init__()
+
+        if config:
+            self.pretrained_cfg = config["pretrained_cfg"]
 
         self.haslinear = haslinear
         if dropout > 0:
@@ -151,7 +154,7 @@ class MobileNetV2(nn.Module):
             for i in range(n):
                 stride = s if i == 0 else 1
                 features.append(
-                    block(input_channel, output_channel, stride, expand_ratio=t)
+                    block(input_channel, output_channel, stride, expand_ratio=t)  # type: ignore
                 )
                 input_channel = output_channel
             if s == 2:
@@ -247,13 +250,13 @@ def fembnetv2(pretrained=False, progress=True, **kwargs):
                         new_dict[new_k] = state_dict[k]
             cumulative_layer += layers
 
-        new_params = model.state_dict()
+        new_params = model.state_dict()  # type: ignore
         new_params.update(new_dict)
-        model.load_state_dict(new_params)
+        model.load_state_dict(new_params)  # type: ignore
     return model
 
 
-def mbnetv2_dropout(pretrained=False, progress=True, **kwargs):
+def mbnetv2_dropout(pretrained=False, progress=True, **kwargs) -> MobileNetV2:
     """
     Constructs a MobileNetV2 architecture from
     `"MobileNetV2: Inverted Residuals and Linear Bottlenecks" <https://arxiv.org/abs/1801.04381>`_.
@@ -283,7 +286,7 @@ def mbnetv2_dropout(pretrained=False, progress=True, **kwargs):
                         new_dict[new_k] = state_dict[k]
             cumulative_layer += layers
 
-        new_params = model.state_dict()
+        new_params = model.state_dict()  # type: ignore
         new_params.update(new_dict)
-        model.load_state_dict(new_params)
+        model.load_state_dict(new_params)  # type: ignore
     return model

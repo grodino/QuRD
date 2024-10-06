@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from pathlib import Path
 from typing import Iterator
 
@@ -5,334 +6,188 @@ from torch import nn
 import torch
 import torchvision
 import polars as pl
+from timm.models import load_state_dict_from_hf, load_model_config_from_hf
 
-from monithor.utils import try_convert
+from monithor.utils import decompose_name, to_hf_name
 from .base import Benchmark
 
 
 class SACBenchmark(Benchmark):
-    base_models = dict(CIFAR10=["vgg_model"])
+    base_models = {"CIFAR10": ["train(vgg_model,CIFAR10,base)"]}
 
     irrelevant_models = (
         # Irrelevant models trained on CIFAR10
-        [f"vgg13({seed})" for seed in range(5)]
-        + [f"resnet18({5 + seed})" for seed in range(5)]
-        + [f"densenet121({10 + seed})" for seed in range(5)]
-        + [f"mobilenet_v2({15 + seed})" for seed in range(5)]
+        [f"train(vgg13,CIFAR10,{seed})" for seed in range(5)]
+        + [f"train(resnet18,CIFAR10,{5 + seed})" for seed in range(5)]
+        + [f"train(densenet121,CIFAR10,{10 + seed})" for seed in range(5)]
+        + [f"train(mobilenet_v2,CIFAR10,{15 + seed})" for seed in range(5)]
         # Irrelevant models trained on CIFAR10C
-        + [f"vgg16_bn_cifar10C({seed})" for seed in range(5)]
-        + [f"resnet18_cifar10C({5 + seed})" for seed in range(5)]
+        + [f"train(vgg16_bn,CIFAR10C,{seed})" for seed in range(5)]
+        + [f"train(resnet18,CIFAR10C,{5 + seed})" for seed in range(5)]
     )
 
     # fmt: off
-    model_variations = dict(vgg_model=([]      
+    model_variations = {"train(vgg_model,CIFAR10,base)":([]      
         # Finetuning the model on the same dataset but different split
-        +[f"finetune({seed})" for seed in range(10)]
+        + [f"finetune({seed})" for seed in range(10)]
 
-        # Transfer the model on a different dataset 
-        # +[f"transfer(CIFAR100,{seed})" for seed in range(10)]
-        + [f"transfer(CIFAR10C, {seed})" for seed in range(10)]
-        # + [f"transfer(TinyImageNet100, {seed})" for seed in range(10)]
+        # Transfer the model on a different dataset
+        + [f"transfer(CIFAR100,{seed})" for seed in range(10)]
+        + [f"transfer(CIFAR10C,{seed})" for seed in range(10)]
 
         # Pruning the model to remove watermarks
         + [f"fineprune({seed})" for seed in range(10)]
 
         # Extracting the model from its labels
-        + [f"label_extraction(vgg13, {seed})" for seed in range(5)]
-        + [f"label_extraction(resnet18, {5 + seed})" for seed in range(5)]
-        + [f"label_extraction(densenet121, {10 + seed})" for seed in range(5)]
-        + [f"label_extraction(mobilenet_v2, {15 + seed})"for seed in range(5)]
+        + [f"label_extraction(vgg13,{seed})" for seed in range(5)]
+        + [f"label_extraction(resnet18,{5 + seed})" for seed in range(5)]
+        + [f"label_extraction(densenet121,{10 + seed})" for seed in range(5)]
+        + [f"label_extraction(mobilenet_v2,{15 + seed})"for seed in range(5)]
         
         # Aversarial model extraction from labels
-        + [f"adv_label_extraction(vgg13, {seed})" for seed in range(5)]
-        + [f"adv_label_extraction(resnet18, {5 + seed})" for seed in range(5)]
-        + [f"adv_label_extraction(densenet121, {10 + seed})" for seed in range(5)]
-        + [f"adv_label_extraction(mobilenet_v2, {15 + seed})"for seed in range(5)]
+        + [f"adv_label_extraction(vgg13,{seed})" for seed in range(5)]
+        + [f"adv_label_extraction(resnet18,{5 + seed})" for seed in range(5)]
+        + [f"adv_label_extraction(densenet121,{10 + seed})" for seed in range(5)]
+        + [f"adv_label_extraction(mobilenet_v2,{15 + seed})"for seed in range(5)]
 
         # Extracting the model from its logits
-        + [f"probit_extraction(vgg13, {seed})" for seed in range(5)]
-        + [f"probit_extraction(resnet18, {5 + seed})" for seed in range(5)]
-        + [f"probit_extraction(densenet121, {10 + seed})" for seed in range(5)]
-        + [f"probit_extraction(mobilenet_v2, {15 + seed})" for seed in range(5)]
-    ))
+        + [f"probit_extraction(vgg13,{seed})" for seed in range(5)]
+        + [f"probit_extraction(resnet18,{5 + seed})" for seed in range(5)]
+        + [f"probit_extraction(densenet121,{10 + seed})" for seed in range(5)]
+        + [f"probit_extraction(mobilenet_v2,{15 + seed})" for seed in range(5)]
+    )}
     # fmt: on
 
-    def list_models(
-        self, dataset: str = "CIFAR10", only_source: bool = False
-    ) -> Iterator[str]:
+    def list_models(self, dataset: str = "CIFAR10") -> Iterator[str]:
         for base_model_name in self.base_models[dataset]:
             # Raw model
             yield base_model_name
 
-            if not only_source:
-                # Irrelevant models (yielded with the same name structure as a
-                # base model since they are not derived from a source model).
-                for variation_name in self.irrelevant_models:
-                    yield variation_name
+            # Irrelevant models (yielded with the same name structure as a
+            # base model since they are not derived from a source model).
+            for variation_name in self.irrelevant_models:
+                yield variation_name
 
-                # Raw model + input variation
-                for variation_name in self.input_variations:
+            # Raw model + input variation
+            for variation_name in self.input_variations:
+                yield base_model_name + "->" + variation_name
+
+            # Raw model + output variations
+            for variation_name in self.output_variations:
+                yield base_model_name + "->" + variation_name
+
+            # Modification of the model weights/architecture
+            if base_model_name in self.model_variations:
+                for variation_name in self.model_variations[base_model_name]:
                     yield base_model_name + "->" + variation_name
-
-                # Raw model + output variations
-                for variation_name in self.output_variations:
-                    yield base_model_name + "->" + variation_name
-
-                # Modification of the model weights/architecture
-                if base_model_name in self.model_variations:
-                    for variation_name in self.model_variations[base_model_name]:
-                        yield base_model_name + "->" + variation_name
 
     def torch_model(
-        self, model_name: str, no_variation: bool = False
-    ) -> tuple[nn.Module, dict]:
+        self, model_name: str, from_disk: bool = False, jit: bool = False
+    ) -> nn.Module:
+        # Discover the architecture, dataset and "seed" to use
+        architecture, dataset, seed = "", "", ""
+        for variation, params in decompose_name(model_name):
+            task = variation
 
-        # Get the SAC variation name and params
-        source_model, variations = None, None
-        SAC_variation, SAC_variation_name, SAC_params = None, None, None
-
-        if "->" in model_name:
-            source_model, variations = model_name.split("->", 1)
-
-            if "->" in variations:
-                SAC_variation, variations = variations.split("->", 1)
+            if variation == "train":
+                architecture, dataset, seed = params
+            elif variation in ("finetune", "fineprune"):
+                (seed,) = params
+            elif variation == "transfer":
+                dataset, seed = params
+            elif variation in (
+                "label_extraction",
+                "adv_label_extraction",
+                "probit_extraction",
+            ):
+                architecture, seed = params
             else:
-                SAC_variation = variations
-                variations = None
+                raise NotImplementedError(
+                    f"The variation {variation} is not implemented"
+                )
 
-            SAC_variation_name, params_str = SAC_variation.split("(")
-            SAC_params = list(map(try_convert, params_str[:-1].split(",")))
+        print(task, architecture, dataset, seed)
+
+        # Create the model with the right architecture
+        if architecture in ("vgg_model", "vgg16_bn"):
+            model = torchvision.models.vgg16_bn(weights=None, num_classes=10)
+            classifier = "classifier[6]"
+            first_conv = "features[0]"
+            num_features = 4_096
+
+        elif architecture == "resnet18":
+            model = torchvision.models.resnet18(weights=None, num_classes=10)
+            classifier = "classifier[6]"
+            first_conv = "fc"
+            num_features = 512
+
+        elif architecture == "vgg13":
+            model = torchvision.models.vgg13(weights=None, num_classes=10)
+            classifier = "classifier[6]"
+            first_conv = "features[0]"
+            num_features = 4_096
+
+        elif architecture == "densenet121":
+            model = torchvision.models.densenet121(weights=None, num_classes=10)
+            classifier = "classifier"
+            first_conv = "features.conv0"
+            num_features = 1024
+
+        elif architecture == "mobilenet_v2":
+            model = torchvision.models.mobilenet_v2(weights=None, num_classes=10)
+            classifier = "classifier[1]"
+            first_conv = "features[0][0]"
+            num_features = 1_280
         else:
-            source_model = model_name
-
-        # Base model
-        if SAC_variation_name is None and source_model == "vgg_model":
-            model = torchvision.models.vgg16_bn(weights=None)
-            in_feature = model.classifier[-1].in_features
-            model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            model.load_state_dict(
-                torch.load(
-                    self.models_dir / "model" / f"{source_model}.pth",
-                    map_location=self.device,
-                )
+            raise NotImplementedError(
+                f"The architecture {architecture} is not supported"
             )
 
+        # Return the right data normalization parameters
+        if dataset == "CIFAR10":
             data_config = dict(
-                mean=(0.4914, 0.4822, 0.4465),
-                std=(0.2023, 0.1994, 0.2010),
+                mean=(0.4914, 0.4822, 0.4465), std=(0.2023, 0.1994, 0.2010)
             )
-
-        # Irrelevant model trained on CIFAR10C
-        elif SAC_variation_name is None and "cifar10C" in source_model:
-            seed = int(source_model.split("(", 1)[1][:-1])
-
-            if "resnet18" in source_model:
-                model = torchvision.models.resnet18(weights=None)
-                in_feature = model.fc.in_features
-                model.fc = torch.nn.Linear(in_feature, 10)
-
-            elif "vgg16_bn" in source_model:
-                model = torchvision.models.vgg16_bn(weights=None)
-                in_feature = model.classifier[-1].in_features
-                model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            else:
-                raise NotImplementedError()
-
-            model.load_state_dict(
-                torch.load(
-                    self.models_dir / "finetune_model" / f"CIFAR10C_{seed}.pth",
-                    map_location=self.device,
-                )
-            )
-
+        elif dataset == "CIFAR10C":
             data_config = dict(
-                mean=(0.4645897160947712, 0.6514782475490196, 0.5637088950163399),
-                std=(0.18422159112571024, 0.3151505122530825, 0.26127269383599344),
+                mean=(0.4646, 0.6515, 0.5637), std=(0.1842, 0.3152, 0.2613)
             )
-
-        # Irrelevant model trained on CIFAR10
-        elif SAC_variation_name is None:
-            seed = int(source_model.split("(", 1)[1][:-1])
-
-            if "vgg13" in source_model:
-                model = torchvision.models.vgg13(weights=None)
-                in_feature = model.classifier[-1].in_features
-                model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            elif "resnet18" in source_model:
-                model = torchvision.models.resnet18(weights=None)
-                in_feature = model.fc.in_features
-                model.fc = torch.nn.Linear(in_feature, 10)
-
-            elif "densenet121" in source_model:
-                model = torchvision.models.densenet121(weights=None)
-                in_feature = model.classifier.in_features
-                model.classifier = torch.nn.Linear(in_feature, 10)
-
-            elif "mobilenet_v2" in source_model:
-                model = torchvision.models.mobilenet_v2(weights=None)
-                in_feature = model.classifier[-1].in_features
-                model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            else:
-                raise NotImplementedError()
-
-            model.load_state_dict(
-                torch.load(
-                    self.models_dir / "model" / f"clean_model_{seed}.pth",
-                    map_location=self.device,
-                )
-            )
-
+        elif dataset == "CIFAR100":
             data_config = dict(
-                mean=(0.4914, 0.4822, 0.4465),
-                std=(0.2023, 0.1994, 0.2010),
+                mean=(0.5071, 0.4865, 0.4409), std=(0.2673, 0.2564, 0.2762)
             )
-
-        # Model extraction (label, label adversarially, probits)
-        elif "extraction" in SAC_variation_name:
-            student, seed = SAC_params  # type: ignore
-
-            if student == "vgg13":
-                model = torchvision.models.vgg13(weights=None)
-                in_feature = model.classifier[-1].in_features
-                model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            elif student == "resnet18":
-                model = torchvision.models.resnet18(weights=None)
-                in_feature = model.fc.in_features
-                model.fc = torch.nn.Linear(in_feature, 10)
-
-            elif student == "densenet121":
-                model = torchvision.models.densenet121(weights=None)
-                in_feature = model.classifier.in_features
-                model.classifier = torch.nn.Linear(in_feature, 10)
-
-            elif student == "mobilenet_v2":
-                model = torchvision.models.mobilenet_v2(weights=None)
-                in_feature = model.classifier[-1].in_features
-                model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-
-            else:
-                raise NotImplementedError()
-
-            if SAC_variation_name == "label_extraction":  # from victim's labels
-                model.load_state_dict(
-                    torch.load(
-                        self.models_dir / "model" / f"student_model_1_{seed}.pth",
-                        map_location=self.device,
-                    )
-                )
-
-            elif (
-                SAC_variation_name == "adv_label_extraction"
-            ):  # adversarially from victim's labels
-                model.load_state_dict(
-                    torch.load(
-                        self.models_dir / "adv_train" / f"adv_{seed}.pth",
-                        map_location=self.device,
-                    )
-                )
-
-            else:  # From victim's logits
-                model.load_state_dict(
-                    torch.load(
-                        self.models_dir / "model" / f"student_model_kd_{seed}.pth",
-                        map_location=self.device,
-                    )
-                )
-
-            data_config = dict(
-                mean=(0.4914, 0.4822, 0.4465),
-                std=(0.2023, 0.1994, 0.2010),
-            )
-
-        # Model pruning
-        elif SAC_variation_name == "fineprune":
-
-            # When creating the finepruned models, the SAC paper authors likely
-            # saved the models using torch.save(). This resulted in the pickling
-            # of the FeatureHook object as a link to its declaration in the
-            # module __main__. Therefore, we need to add this object in the
-            # __main__ module in order to unpickle the model.
-            class FeatureHook:
-                def __init__(self, module):
-                    self.hook = module.register_forward_hook(self.hook_fn)
-
-                def hook_fn(self, module, input, output):
-                    self.output = output
-
-                def close(self):
-                    self.hook.remove()
-
-            main = __import__("__main__")
-            main.FeatureHook = FeatureHook
-
-            (seed,) = SAC_params  # type: ignore
-            model = torch.load(
-                self.models_dir / "Fine-Pruning" / f"prune_model_{seed}.pth",
-                map_location=self.device,
-            )
-
-            data_config = dict(
-                mean=(0.4914, 0.4822, 0.4465),
-                std=(0.2023, 0.1994, 0.2010),
-            )
-
-        # Model transfer
-        elif "transfer" in SAC_variation_name:
-            (dataset, seed) = SAC_params  # type: ignore
-
-            if dataset != "CIFAR10C":
-                raise NotImplementedError()
-
-            model = torchvision.models.vgg16_bn(weights=None)
-            in_feature = model.classifier[-1].in_features
-            model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-            model.load_state_dict(
-                torch.load(
-                    self.models_dir
-                    / "finetune_model"
-                    / f"finetune_{dataset.lower()}_{seed}.pth",  # type: ignore
-                    map_location=self.device,
-                )
-            )
-
-            data_config = dict(
-                mean=(0.4645897160947712, 0.6514782475490196, 0.5637088950163399),
-                std=(0.18422159112571024, 0.3151505122530825, 0.26127269383599344),
-            )
-
-        # Finetune on different split of the dataset
-        elif SAC_variation_name == "finetune":
-            (seed,) = SAC_params  # type: ignore
-
-            model = torchvision.models.vgg16_bn(weights=None)
-            in_feature = model.classifier[-1].in_features
-            model.classifier[-1] = torch.nn.Linear(in_feature, 10)
-            model.load_state_dict(
-                torch.load(
-                    self.models_dir / "finetune_10" / f"finetune{seed}.pth",
-                    map_location=self.device,
-                )
-            )
-
-            data_config = dict(
-                mean=(0.4914, 0.4822, 0.4465),
-                std=(0.2023, 0.1994, 0.2010),
-            )
-
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(f"The dataset {dataset} is not supported")
 
-        # For now, the input size is common to all the models
-        data_config["input_size"] = [3, 32, 32]  # type: ignore
+        if from_disk:
+            model = load_from_disk(
+                task=task,
+                dataset=str(dataset),
+                model_name=model_name,
+                seed=str(seed),
+                architecture=model,
+                models_dir=self.models_dir,
+                device=self.device,
+            )
+            model.pretrained_cfg = {  # type: ignore
+                "architecture": architecture,
+                "crop_mode": "center",
+                "first_conv": first_conv,
+                "classifier": classifier,
+                "input_size": (3, 32, 32),
+                "num_classes": 10,
+                "num_features": num_features,
+                **data_config,
+            }
+        else:
+            model_id = f"maurice-fp/SACBenchmark-{to_hf_name(model_name)}"
+            model.load_state_dict(load_state_dict_from_hf(model_id))
+            model.pretrained_cfg, _, _ = load_model_config_from_hf(model_id)
 
-        model.num_classes = 10  # type: ignore
+        if jit:
+            model: nn.Module = torch.compile(model, mode="reduce-overhead")  # type: ignore
 
-        return model, data_config
+        return model
 
     def from_records(self, generated_dir: Path) -> pl.DataFrame:
         """Creates a dataframe with columns [dataset, distance, representation,
@@ -419,3 +274,102 @@ class SACBenchmark(Benchmark):
         )
 
         return results
+
+
+def load_from_disk(
+    task: str,
+    dataset: str,
+    model_name: str,
+    seed: str | int,
+    architecture: nn.Module,
+    models_dir: Path,
+    device,
+) -> nn.Module:
+    """Loads the requested model from disk, assuming a setup as described in the
+    original code."""
+
+    # Resolve the weights path
+    if task == "train":
+        # Base (victim) model
+        if "base" in model_name:
+            weights_path = models_dir / "model" / "vgg_model.pth"
+        # Irrelevant model model trained on CIFAR10
+        elif dataset == "CIFAR10":
+            weights_path = models_dir / "model" / f"clean_model_{seed}.pth"
+        # Irrelevant model model trained on CIFAR10C
+        elif dataset == "CIFAR10C":
+            weights_path = models_dir / "finetune_model" / f"CIFAR10C_{seed}.pth"
+        # Irrelevant model model trained on 10 first labels of CIFAR100
+        elif dataset == "CIFAR100":
+            weights_path = models_dir / "finetune_model" / f"CIFAR100{seed}.pth"
+        else:
+            raise NotImplementedError()
+
+    elif task == "finetune":
+        weights_path = models_dir / "finetune_10" / f"finetune{seed}.pth"
+
+    elif task == "transfer":
+        # transfer to CIFAR10C
+        if dataset == "CIFAR10C":
+            weights_path = (
+                models_dir / "finetune_model" / f"finetune_cifar10c_{seed}.pth"
+            )
+        # transfer to 10 first labels of CIFAR100
+        elif dataset == "CIFAR100":
+            weights_path = models_dir / "finetune_model" / f"finetune_C_{seed}.pth"
+        else:
+            raise NotImplementedError()
+
+    elif task == "fineprune":
+        weights_path = models_dir / "Fine-Pruning" / f"prune_model_{seed}.pth"
+
+    elif task == "label_extraction":
+        weights_path = models_dir / "model" / f"student_model_1_{seed}.pth"
+
+    elif task == "adv_label_extraction":
+        weights_path = models_dir / "adv_train" / f"adv_{seed}.pth"
+
+    elif task == "probit_extraction":
+        weights_path = models_dir / "model" / f"student_model_kd_{seed}.pth"
+
+    else:
+        raise NotImplementedError(f"The task {task} is not supported")
+
+    if task == "fineprune":
+        # When creating the finepruned models, the SAC paper authors likely
+        # saved the models using torch.save(). This resulted in the pickling
+        # of the FeatureHook object as a link to its declaration in the
+        # module __main__. Therefore, we need to add this object in the
+        # __main__ module in order to unpickle the model.
+        class FeatureHook:
+            def __init__(self, module):
+                self.hook = module.register_forward_hook(self.hook_fn)
+
+            def hook_fn(self, module, input, output):
+                self.output = output
+
+            def close(self):
+                self.hook.remove()
+
+        main = __import__("__main__")
+        main.FeatureHook = FeatureHook
+
+        model: nn.Module = torch.load(
+            weights_path, map_location=device, weights_only=False
+        )
+
+        # Remove the hooks that were added during finepruning. No other hook
+        # is present here so we can delete them all.
+        def delete_hooks(module: nn.Module):
+            for child in module.children():
+                child._forward_hooks = OrderedDict()
+
+        delete_hooks(model)
+
+    else:
+        model = architecture
+        model.load_state_dict(
+            torch.load(weights_path, map_location=device, weights_only=True)
+        )
+
+    return model

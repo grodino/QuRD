@@ -1,27 +1,26 @@
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Iterator
 
 from torch import nn
 import torch
 import polars as pl
+from timm.models import load_model_config_from_hf, load_state_dict_from_hf
 
+from monithor.utils import decompose_name, to_hf_name
 from monithor.external import fe_mobilenet, fe_resnet
 from .base import Benchmark
 
 
 class ModelReuse(Benchmark):
-    """From the ModelDiff paper
-
-    NOTE: here we do not use the base imagenet-pretrained models as sources
-    because we restrict ourselves to comparisons between models that have the
-    same output space.
-    """
+    """ModelReuse fingerprinting benchmark from ModelDiff: Testing-based DNN
+    Similarity Comparison for Model Reuse Detection"""
 
     base_models = {
         "imagenet-1k": ["mbnetv2", "resnet18"],
         "Flower102": ["mbnetv2", "resnet18"],
         "SDog120": ["mbnetv2", "resnet18"],
-        # NOTE: MIT67 is present in the code but not mentionned in the paper
+        # NOTE: MIT67 modesl are present in the code but not mentionned in the
+        # paper
         # "MIT67": ["mbnetv2", "resnet18"],
     }
 
@@ -45,22 +44,22 @@ class ModelReuse(Benchmark):
         + ["distill()"]
     )
 
-    n_classes = {"Flower102": 102, "SDog120": 120}
+    n_classes = {"Flower102": 102, "SDog120": 120, "imagenet-1k": 1_000}
 
     def list_models(
-        self, dataset: str = "Flower102", only_source: bool = False
+        self, dataset: str = "Flower102", jit: bool = False
     ) -> Iterator[str]:
+        if dataset == "imagenet-1k":
+            for base_model in self.base_models["imagenet-1k"]:
+                yield f"pretrain({base_model},imagenet-1k)"
 
-        # FIXME: restrict to specific datasets
+            return
 
         # Enumerate the models transferred from pretrained imagenet models
         for base_model in self.base_models["imagenet-1k"]:
             for transfer in self.transfers[dataset]:
                 source_model = f"pretrain({base_model},imagenet-1k)->" + transfer
                 yield source_model
-
-                if only_source:
-                    continue
 
                 # Enumerate the variations of this source_model
                 for variation in self.variations:
@@ -71,9 +70,6 @@ class ModelReuse(Benchmark):
             source_model = f"train({base_model},{dataset})"
             yield source_model
 
-            if only_source:
-                continue
-
             # Enumerate the variations of this source_model
             for variation in self.variations:
                 # The quantize() variation is not available for the retrained
@@ -83,81 +79,80 @@ class ModelReuse(Benchmark):
                 yield source_model + "->" + variation
 
     def torch_model(
-        self, model_name: str, no_variation: bool = False
-    ) -> tuple[nn.Module, dict[str, Any]]:
+        self, model_name: str, from_disk: bool = False, jit: bool = False
+    ) -> nn.Module:
 
-        if no_variation is True:
-            raise NotImplementedError()
+        # Get the dataset used, the model to instanciate and detect if it is a
+        # quantized model
+        quantized = None
+        for variation, params in decompose_name(model_name):
+            if variation in ("pretrain", "train"):
+                architecture, dataset = params
+            elif variation == "transfer":
+                dataset, _ = params
+            elif variation == "steal":
+                (architecture,) = params
+            elif variation == "quantize":
+                (quantized,) = params
 
-        # Convert the model name to the names used by the ModelReuse folder
-        model_str = (
-            model_name.replace("->", "-")
-            .replace("imagenet-1k", "ImageNet")
-            .replace(".0", "")
-            + "-"
-        )
-
-        # Find the model checkpoint path
-        model_path = self.models_dir / model_str / "final_ckpt.pth"
-        assert model_path.resolve().exists(), f"{model_str = }, {model_path = }"
-
-        # Get the dataset used
-        if "SDog120" in model_name:
-            dataset = "SDog120"
-        else:
-            dataset = "Flower102"
-
-        # Get which architecture to use
-        if "->" in model_name:
-            source, variation = model_name.split("->", 1)
-        else:
-            source, variation = model_name, ""
-
-        if "mbnetv2" in variation:
+        # Instanciate the model architecture
+        if architecture == "mbnetv2":
             model = fe_mobilenet.mbnetv2_dropout(
-                pretrained=False, num_classes=self.n_classes[dataset]
+                pretrained=False, num_classes=self.n_classes[str(dataset)]
             )
-        elif "resnet18" in variation:
+            first_conv = "layer1[0][0]"
+            classifier = "classifier"
+            num_features = 1_280
+        elif architecture == "resnet18":
             model = fe_resnet.resnet18_dropout(
-                pretrained=False, num_classes=self.n_classes[dataset]
+                pretrained=False, num_classes=self.n_classes[str(dataset)]
             )
-
-        elif "mbnetv2" in source:
-            model = fe_mobilenet.mbnetv2_dropout(
-                pretrained=False, num_classes=self.n_classes[dataset]
-            )
-        elif "resnet18" in source:
-            model = fe_resnet.resnet18_dropout(
-                pretrained=False, num_classes=self.n_classes[dataset]
-            )
-
-        state_dict = torch.load(
-            model_path,
-            map_location="cpu",
-        )["state_dict"]
-
-        # Data config taken from ModelDiff's code
-        data_config = dict(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225],
-            input_size=[3, 224, 224],
-        )
-
-        # Adapt the quantized models
-        if "quantize" in model_name:
-            data_config["force_cpu"] = True  # type: ignore
-
-            if "float16" in model_name:
-                model = torch.quantization.quantize_dynamic(model, dtype=torch.float16)
-
-            else:
-                model = torch.quantization.quantize_dynamic(model, dtype=torch.qint8)
+            first_conv = "fc"
+            classifier = "conv1"
+            num_features = 512
+        else:
+            raise NotImplementedError(f"Unknown architecture {architecture}")
 
         # Load the weights
-        model.load_state_dict(state_dict)
-        model.num_classes = self.n_classes[dataset]  # type: ignore
+        if from_disk:
+            model = load_from_disk(
+                model_name=model_name,
+                architecture=model,
+                models_dir=self.models_dir,
+                device=self.device,
+            )
+            model.pretrained_cfg = {  # type: ignore
+                "architecture": architecture,
+                "crop_mode": "center",
+                "first_conv": first_conv,
+                "classifier": classifier,
+                "num_classes": 10,
+                "num_features": num_features,
+                # Mean and std are taken from ModelDiff's code and seem to be
+                # independent of the dataset.
+                "mean": (0.485, 0.456, 0.406),
+                "std": (0.229, 0.224, 0.225),
+                "input_size": (3, 224, 224),
+            }
+        else:
+            model_id = "maurice-fp/ModelReuse-" + to_hf_name(
+                model_name.replace(f"->quantize({quantized})", "")
+            )
+            model.load_state_dict(load_state_dict_from_hf(model_id))
+            model.pretrained_cfg, _, _ = load_model_config_from_hf(model_id)
 
-        return model, data_config
+        # Apply quantization if requested
+        if quantized == "float16":
+            model = torch.quantization.quantize_dynamic(model, dtype=torch.float16)
+        elif quantized == "qint8":
+            model = torch.quantization.quantize_dynamic(model, dtype=torch.qint8)
+        elif quantized is not None:
+            raise NotImplementedError(f"quantization {quantized} is not supported")
+
+        if jit:
+            model: nn.Module = torch.compile(model, mode="reduce-overhead")  # type: ignore
+
+        return model
 
     def from_records(self, generated_dir: Path) -> pl.DataFrame:
         """Creates a dataframe with columns [dataset, distance, representation,
@@ -248,4 +243,41 @@ class ModelReuse(Benchmark):
             .min(),
         )
 
-        return records.join(calibration, on=source_and_dist_key).collect()
+        results = records.join(calibration, on=source_and_dist_key).collect()
+        return results
+
+
+def load_from_disk(
+    model_name: str, architecture: nn.Module, models_dir: Path, device
+) -> nn.Module:
+    model_str = (
+        model_name.replace("->", "-")
+        .replace("imagenet-1k", "ImageNet")
+        .replace(".0", "")
+        + "-"
+    )
+
+    # Find the model checkpoint path
+    model_path = models_dir / model_str / "final_ckpt.pth"
+    state_dict = torch.load(model_path, map_location=device, weights_only=False)[
+        "state_dict"
+    ]
+
+    # Adapt the quantized models
+    if "quantize" in model_name:
+        if "float16" in model_name:
+            model = torch.quantization.quantize_dynamic(
+                architecture, dtype=torch.float16
+            )
+        elif "qint8" in model_name:
+            model = torch.quantization.quantize_dynamic(architecture, dtype=torch.qint8)
+        else:
+            raise ValueError()
+
+    else:
+        model = architecture
+
+    # Load the weights
+    model.load_state_dict(state_dict)
+
+    return model

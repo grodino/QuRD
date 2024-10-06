@@ -28,7 +28,7 @@ class Benchmark(ABC):
     def __init__(
         self,
         data_dir: Path = Path("data/"),
-        models_dir: Path = Path("generated/models/"),
+        models_dir: Path = Path("models/"),
         device: str = "cuda",
     ) -> None:
         self.data_dir = data_dir
@@ -53,10 +53,8 @@ class Benchmark(ABC):
             download=True,
         )
 
-        # for model in self.list_models(dataset, only_source=False):
-        for model in self.list_models(dataset, only_source=False):
-            _, data_config = self.torch_model(model)
-            print(f"{model:<40} {data_config['input_size']}")
+        for model in self.list_models(dataset):
+            model = self.torch_model(model)
 
     def dataset(
         self,
@@ -74,30 +72,15 @@ class Benchmark(ABC):
         )
         return dataset
 
-    def list_models(
-        self, dataset: str = "CIFAR10", only_source: bool = False
-    ) -> Iterator[str]:
-        for base_model_name in self.base_models[dataset]:
-            # Raw model
-            yield base_model_name
-
-            if not only_source:
-                # Raw model + input variation
-                for variation_name in self.input_variations:
-                    yield base_model_name + "->" + variation_name
-
-                # Raw model + output variations
-                for variation_name in self.output_variations:
-                    yield base_model_name + "->" + variation_name
-
-                # Modification of the model weights/architecture
-                for variation_name in self.model_variations:
-                    yield base_model_name + "->" + variation_name
+    @abstractmethod
+    def list_models(self, dataset: str = "CIFAR10") -> Iterator[str]:
+        """Lists all the models used in the benchmark, by their name"""
+        ...
 
     @abstractmethod
     def torch_model(
-        self, model_name: str, no_variation: bool = False
-    ) -> tuple[nn.Module, dict]:
+        self, model_name: str, from_disk: bool = False, jit: bool = False
+    ) -> nn.Module:
         """Returns the torch Module given the model name.
 
         If `no_variation` is True, only return the base torch Module, without
@@ -105,25 +88,34 @@ class Benchmark(ABC):
         """
         ...
 
-    def test(self, model_name: str, dataset_name: str, batch_size: int = 64):
+    def test(
+        self,
+        model_name: str,
+        dataset_name: str,
+        batch_size: int = 64,
+        jit: bool = False,
+    ) -> float:
         """Evaluates the performance of the given model on the specified dataset"""
 
-        model, config = self.torch_model(model_name)
+        model = self.torch_model(model_name, jit=jit)
 
         # Transform needed by the source model
         transform = v2.Compose(
             [
                 v2.ToImage(),
-                v2.Resize(size=config["input_size"][-2:], antialias=True),
+                v2.Resize(size=model.pretrained_cfg["input_size"][-2:], antialias=True),
                 v2.ToDtype(torch.float32, scale=True),
-                v2.Normalize(mean=config["mean"], std=config["std"]),
+                v2.Normalize(
+                    mean=model.pretrained_cfg["mean"],
+                    std=model.pretrained_cfg["std"],
+                ),
             ]
         )
 
         model.eval()
 
         # Send the model on the right device
-        if config.get("force_cpu", False):
+        if model.pretrained_cfg.get("force_cpu", False):
             device = "cpu"
             debug(f"forcing device=cpu as requested ({model_name = })")
         else:
