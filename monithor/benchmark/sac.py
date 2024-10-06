@@ -8,8 +8,8 @@ import torchvision
 import polars as pl
 from timm.models import load_state_dict_from_hf, load_model_config_from_hf
 
-from monithor.utils import decompose_name, to_hf_name
 from .base import Benchmark
+from .utils import decompose_name, to_hf_name
 
 
 class SACBenchmark(Benchmark):

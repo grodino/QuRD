@@ -3,7 +3,7 @@ from torch import nn
 from torchvision.transforms.v2 import Transform
 import foolbox as fb
 
-from monithor.utils import batch_predict
+from .utils import batch_predict
 
 
 def find_adversarial(

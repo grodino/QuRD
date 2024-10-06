@@ -5,10 +5,10 @@ from torch import nn
 from torch.nn import functional as F
 from torchvision.transforms.v2 import Transform
 
-from monithor.fingerprint.base import OutputRepresentation
-from monithor.fingerprint.modeldiff import decision_distance_vector
-from monithor.fingerprint.zlime import zlime_vector
-from monithor.utils import batch_predict
+from .base import OutputRepresentation
+from .modeldiff import decision_distance_vector
+from .zlime import zlime_vector
+from .utils import batch_predict
 
 
 class HardLabels(OutputRepresentation):

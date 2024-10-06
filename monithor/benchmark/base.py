@@ -14,11 +14,10 @@ from torchvision.transforms import v2
 from torchmetrics.classification import Accuracy
 import polars as pl
 
-from monithor.utils import get_dataset
+from .utils import get_dataset
 
 
 class Benchmark(ABC):
-    # list of pretrained models from the TIMM/HF/Torch Hub
     base_models = {}
 
     input_variations = []

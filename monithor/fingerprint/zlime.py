@@ -4,12 +4,11 @@ import numpy as np
 from skimage.segmentation import quickshift
 import torch
 from torch import nn
-from torch.utils.data import Dataset
 from torchvision.transforms.v2 import Transform
 from numba import njit
 from scipy.optimize import linear_sum_assignment
 
-from monithor.utils import batch_predict
+from .utils import batch_predict
 
 
 def subsample(images: np.ndarray, n: int) -> tuple[torch.Tensor, list[torch.Tensor]]:

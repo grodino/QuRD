@@ -9,10 +9,10 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms.v2 import CutMix, Compose, Transform, Normalize
 from torchvision.transforms.v2 import functional as VF
 
-from monithor.fingerprint.base import QueriesSampler
-from monithor.fingerprint.modeldiff import find_adversarial
-from monithor.fingerprint.zlime import subsample
-from monithor.utils import batch_predict, sample_batch
+from .base import QueriesSampler
+from .modeldiff import find_adversarial
+from .zlime import subsample
+from .utils import batch_predict, sample_batch
 
 
 class RandomQueries(QueriesSampler):
@@ -294,7 +294,7 @@ class BoundaryQueries(RandomQueries):
         ):
             image = image.clone().detach().to(self.device)
             image.requires_grad = True
-            optimizer = torch.optim.Adam([image], lr=0.01)
+            optimizer = torch.optim.adam.Adam([image], lr=0.01)
 
             # Max number of iterations is set to 1000 in IPGuard paper
             for i in range(1_000):

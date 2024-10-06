@@ -9,7 +9,7 @@ import torch
 
 from monithor.benchmark.base import Benchmark
 from monithor.benchmark.sac import SACBenchmark
-from monithor.utils import to_hf_name
+from monithor.benchmark.utils import to_hf_name
 from monithor.benchmark.model_reuse import ModelReuse
 
 
