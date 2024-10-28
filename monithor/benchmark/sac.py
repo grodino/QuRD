@@ -106,8 +106,6 @@ class SACBenchmark(Benchmark):
                     f"The variation {variation} is not implemented"
                 )
 
-        print(task, architecture, dataset, seed)
-
         # Create the model with the right architecture
         if architecture in ("vgg_model", "vgg16_bn"):
             model = torchvision.models.vgg16_bn(weights=None, num_classes=10)

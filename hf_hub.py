@@ -85,24 +85,10 @@ if __name__ == "__main__":
     #     description="Original paper: ModelDiff: Testing-Based DNN Similarity Comparison for Model Reuse Detection",
     #     benchmark=model_reuse,
     # )
-    # upload_benchmark(
-    #     name="SACBenchmark",
-    #     description="Original paper: Are You Stealing My Model? Sample Correlation for Fingerprinting Deep Neural Networks",
-    #     benchmark=sac_benchmark,
-    # )
-
-    # validate_upload(model_reuse)
-
-    # model_reuse.prepare("Flower102")
-    total = perf_counter()
-    for model_name in islice(model_reuse.list_models(dataset="Flower102"), 5):
-        print(model_name)
-        this = perf_counter()
-        model_reuse.test(model_name, "Flower102")
-        this = perf_counter() - this
-        print(f"Time: {this}")
-
-    total = perf_counter() - total
-    print(f"Total: {total}")
-
-    # validate_upload(sac_benchmark, delete_after_download=True)
+    upload_benchmark(
+        name="SACBenchmark",
+        description="Original paper: Are You Stealing My Model? Sample Correlation for Fingerprinting Deep Neural Networks",
+        benchmark=sac_benchmark,
+    )
+    validate_upload(model_reuse)
+    validate_upload(sac_benchmark, delete_after_download=True)

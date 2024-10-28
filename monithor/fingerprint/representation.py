@@ -12,10 +12,6 @@ from .utils import batch_predict
 
 
 class HardLabels(OutputRepresentation):
-    def __init__(self, batch_size: int = 64, device: str = "cpu") -> None:
-        self.batch_size = batch_size
-        self.device = device
-
     def __call__(
         self, queries: Any, model: nn.Module, transform: Transform | None = None
     ) -> torch.Tensor:
@@ -33,10 +29,6 @@ class HardLabels(OutputRepresentation):
 
 
 class Logits(OutputRepresentation):
-    def __init__(self, batch_size: int = 64, device: str = "cpu") -> None:
-        self.batch_size = batch_size
-        self.device = device
-
     def __call__(
         self, queries: Any, model: nn.Module, transform: Transform | None = None
     ) -> torch.Tensor:
@@ -117,10 +109,6 @@ class SAC(OutputRepresentation):
 
 
 class ZLIME(OutputRepresentation):
-    def __init__(self, batch_size: int = 64, device: str = "cpu") -> None:
-        self.batch_size = batch_size
-        self.device = device
-
     def __call__(
         self,
         queries: tuple[torch.Tensor, list[torch.Tensor]],

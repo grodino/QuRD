@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import inspect
 from pathlib import Path
 import pickle
-from typing import Any
+from typing import Any, Callable
 import numpy as np
 
 import torch
@@ -16,7 +16,7 @@ class QueriesSampler(ABC):
     def sample(self, dataset: Dataset, budget: int) -> Any:
         pass
 
-    def from_file(self, path: Path, *args) -> Any:
+    def from_file(self, path: Path) -> Any:
         with open(path, "rb") as file:
             source_queries: torch.Tensor = pickle.load(file)
 
@@ -71,6 +71,11 @@ class QueriesSampler(ABC):
 
 class OutputRepresentation(ABC):
     device: str
+    batch_size: int
+
+    def __init__(self, batch_size: int = 64, device: str = "cpu") -> None:
+        self.batch_size = batch_size
+        self.device = device
 
     @abstractmethod
     def __call__(
