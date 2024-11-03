@@ -12,7 +12,7 @@ from torchvision.transforms.v2 import functional as VF
 from .base import QueriesSampler
 from .modeldiff import find_adversarial
 from .zlime import subsample
-from .utils import batch_predict, sample_batch
+from .utils import batch_predict, sample_batch, split_transform
 
 
 class RandomQueries(QueriesSampler):
@@ -90,9 +90,6 @@ class RandomNegativeQueries(QueriesSampler):
 
     def __init__(
         self,
-        source_model: nn.Module,
-        source_transform: Transform,
-        num_classes: int,
         subsample: Optional[int] = None,
         augment: bool = False,
         device: str = "cpu",
@@ -102,16 +99,17 @@ class RandomNegativeQueries(QueriesSampler):
             augment and subsample
         ), "Subsample and augment cannot be both activated at the same time"
 
-        self.source_model = source_model
-        self.source_transform = source_transform
-        self.num_classes = num_classes
         self.subsample = subsample
         self.augment = augment
         self.device = device
         self.batch_size = batch_size
 
     def sample(
-        self, dataset: Dataset, budget: int
+        self,
+        dataset: Dataset,
+        budget: int,
+        source_model: nn.Module,
+        source_transform: Transform,
     ) -> torch.Tensor | tuple[torch.Tensor, list[torch.Tensor]]:
         if self.subsample:
             assert (
@@ -121,8 +119,8 @@ class RandomNegativeQueries(QueriesSampler):
         # Gather queries with negative labels up to the budget
         candidate_queries, candidate_labels = find_negatives(
             dataset,
-            transform=self.source_transform,
-            model=self.source_model,
+            transform=source_transform,
+            model=source_model,
             limit=budget,
             batch_size=self.batch_size,
             device=self.device,
@@ -188,27 +186,30 @@ class RandomNegativeQueries(QueriesSampler):
 class AdversarialQueries(RandomQueries):
     def __init__(
         self,
-        source_model: nn.Module,
-        source_transform: Transform,
         subsample: int | None = None,
         batch_size: int = 64,
         device: str = "cpu",
     ):
         super().__init__(subsample)
-        self.source_model = source_model
         self.batch_size = batch_size
         self.device = device
+
+    def sample(
+        self,
+        dataset: Dataset,
+        budget: int,
+        source_model: nn.Module,
+        source_transform: Transform,
+    ):
+        seeds = super().sample(dataset, budget // 2)
 
         if prepocessing := get_normalize_params(source_transform):
             self.preprocessing = prepocessing
         else:
             raise ValueError("No Normalization was given")
 
-    def sample(self, dataset: Dataset, budget: int):
-        seeds = super().sample(dataset, budget // 2)
-
         adversarial = find_adversarial(
-            self.source_model,
+            source_model,
             images=seeds,  # type: ignore
             preprocessing=self.preprocessing,
             batch_size=self.batch_size,
@@ -229,32 +230,33 @@ class AdversarialQueries(RandomQueries):
 class BoundaryQueries(RandomQueries):
     def __init__(
         self,
-        source_model: nn.Module,
-        source_transform: Transform,
         k: float = 10,
         batch_size: int = 64,
         device: str = "cpu",
     ):
         super().__init__(subsample=None)
-        self.source_model = source_model
         self.k = k
         self.batch_size = batch_size
         self.device = device
 
+    def sample(
+        self,
+        dataset: Dataset,
+        budget: int,
+        source_model: nn.Module | None = None,
+        source_transform: Transform | None = None,
+    ):
         if prepocessing := get_normalize_params(source_transform):
             self.preprocessing = prepocessing
         else:
             raise ValueError("No Normalization was given")
 
-        self.source_transform = source_transform
-
-    def sample(self, dataset: Dataset, budget: int):
         seeds: torch.Tensor = super().sample(dataset, budget)  # type: ignore
 
         logits = batch_predict(
-            self.source_model,
+            source_model,
             seeds,
-            self.source_transform,
+            source_transform,
             self.batch_size,
             self.device,
         )
@@ -285,8 +287,8 @@ class BoundaryQueries(RandomQueries):
         images = seeds.clone().detach()
         generated_images = []
 
-        self.source_model.to(self.device).eval()
-        for p in self.source_model.parameters():
+        source_model.to(self.device).eval()
+        for p in source_model.parameters():
             p.requires_grad = False
 
         for image, predicted_label, target_label in zip(
@@ -298,9 +300,7 @@ class BoundaryQueries(RandomQueries):
 
             # Max number of iterations is set to 1000 in IPGuard paper
             for i in range(1_000):
-                pred = self.source_model(
-                    self.source_transform(image).unsqueeze(0)
-                ).squeeze()
+                pred = source_model(source_transform(image).unsqueeze(0)).squeeze()
                 cost = boundary_loss(pred, predicted_label, target_label, self.k)
 
                 cost.backward()
@@ -384,7 +384,15 @@ def find_negatives(
     """Return the images (and corresponding labels) in the `dataset` that are
     wrongly classified by the provided `model`"""
 
+    assert (
+        dataset.transform is None
+    ), "The dataset must have no transform as transforms are handeld by the query sampler"
+
+    transform, normalize = split_transform(transform)
+    dataset.transform = transform
+
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
     model.eval()
     model.to(device)
 
@@ -394,11 +402,12 @@ def find_negatives(
     total_negatives = 0
 
     for images, labels in dataloader:
+        # print(images)
         images = images.to(device)
 
         with torch.no_grad():
             # Make the prediction on the transformed image
-            pred_labels = model(transform(images)).argmax(-1).cpu()
+            pred_labels = model(normalize(images)).argmax(-1).cpu()
         images.cpu()
 
         negatives = pred_labels != labels
@@ -412,6 +421,7 @@ def find_negatives(
             break
 
     model.cpu()
+    dataset.transform = None
 
     # Gather all queries (and labels)
     return torch.cat(negative_queries, dim=0), torch.cat(negative_labels, dim=0)
