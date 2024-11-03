@@ -1,5 +1,6 @@
+from itertools import combinations, permutations, product
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from torch import nn
 import torch
@@ -45,6 +46,9 @@ class ModelReuse(Benchmark):
     )
 
     n_classes = {"Flower102": 102, "SDog120": 120, "imagenet-1k": 1_000}
+
+    def pairs(self, dataset: str) -> Iterable[tuple[nn.Module, nn.Module]]:
+        yield from permutations(self.list_models(dataset), 2)
 
     def list_models(
         self, dataset: str = "Flower102", jit: bool = False
@@ -126,7 +130,7 @@ class ModelReuse(Benchmark):
                 "crop_mode": "center",
                 "first_conv": first_conv,
                 "classifier": classifier,
-                "num_classes": 10,
+                "num_classes": self.n_classes[dataset],
                 "num_features": num_features,
                 # Mean and std are taken from ModelDiff's code and seem to be
                 # independent of the dataset.

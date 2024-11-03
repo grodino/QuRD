@@ -62,6 +62,20 @@ def sample_batch(dataset: Dataset, n: int) -> tuple[torch.Tensor, torch.Tensor]:
     return next(iter(loader))
 
 
+def split_transform(transform: v2.Compose) -> tuple[v2.Transform, v2.Normalize]:
+    """Split the given transform into a Normalize transform and the rest."""
+    transforms = []
+    normalize = None
+
+    for transform in transform.transforms:
+        if isinstance(transform, (v2.Normalize, Normalize)):
+            normalize = transform
+        else:
+            transforms.append(transform)
+
+    return v2.Compose(transforms), normalize
+
+
 def to_v2_transform(transform: Compose) -> v2.Compose:
     resize, center, _, normalize = transform.transforms
 
