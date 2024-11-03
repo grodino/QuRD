@@ -3,12 +3,7 @@ import re
 from typing import Iterable
 
 from torch.utils.data import Dataset
-from torchvision.datasets import (
-    CIFAR10,
-    CIFAR100,
-    Flowers102,
-    SVHN,
-)
+from torchvision.datasets import CIFAR10, CIFAR100, Flowers102
 from timm.data import create_dataset
 
 
@@ -51,27 +46,15 @@ def get_dataset(
             102,
         )
     elif dataset == "SDog120":
-        from external.stanford_dog import SDog120
+        sdogs = create_dataset(
+            "hfds/maurice-fp/stanford-dogs",
+            root=str(data_dir / dataset),
+            download=download,
+            transform=transform,
+            split="train" if split == "train" else "test",
+        )
+        return sdogs, 120
 
-        return (
-            SDog120(
-                Path(data_dir) / "SDog120",
-                is_train=(split == "train"),
-                transform=transform,
-                shots=-1,
-            ),
-            120,
-        )
-    elif dataset == "SVHN":
-        return (
-            SVHN(
-                str(data_dir / dataset),
-                split=split,
-                transform=transform,
-                download=download,
-            ),
-            10,
-        )
     elif dataset == "imagenet-1k":
         imagenet = create_dataset(
             "hfds/imagenet-1k",
