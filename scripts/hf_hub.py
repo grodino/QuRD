@@ -12,10 +12,10 @@ import torch
 from scipy.io import loadmat
 import polars as pl
 
-from monithor.benchmark.base import Benchmark
-from monithor.benchmark.sac import SACBenchmark
-from monithor.benchmark.utils import to_hf_name
-from monithor.benchmark.model_reuse import ModelReuse
+from maurice.benchmark.base import Benchmark
+from maurice.benchmark.sac import SACBenchmark
+from maurice.benchmark.utils import to_hf_name
+from maurice.benchmark.model_reuse import ModelReuse
 
 
 def upload_benchmark(name: str, description: str, benchmark: Benchmark):

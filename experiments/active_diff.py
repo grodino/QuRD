@@ -16,17 +16,17 @@ import polars as pl
 import numpy as np
 from numba import njit
 
-from monithor.benchmark import get_benchmark
+from maurice.benchmark import get_benchmark
 
-from monithor.fingerprint.base import OutputRepresentation, QueriesSampler
-from monithor.fingerprint.queries import (
+from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
+from maurice.fingerprint.queries import (
     AdversarialNegativeQueries,
     AdversarialQueries,
     BoundaryQueries,
     RandomNegativeQueries,
     RandomQueries,
 )
-from monithor.fingerprint.representation import (
+from maurice.fingerprint.representation import (
     ZLIME,
     DecisionDistanceVector,
     HardLabels,
