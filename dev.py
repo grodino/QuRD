@@ -128,12 +128,19 @@ class Experiment:
 
         dataset_name = "SDog120"
         dataset = self.benchmark.dataset(dataset_name)
+        scores: dict[str, list[tuple[str, str, float]]] = {}
+        models = {}
 
         for fingerprint, (sampler, representation, distance) in fingerprints.items():
+            scores[fingerprint] = []
+
             for source_name, target_name in self.benchmark.pairs(dataset_name):
-                print(source_name, target_name)
-                source_model = self.benchmark.torch_model(source_name)
-                target_model = self.benchmark.torch_model(target_name)
+                source_model = models.setdefault(
+                    source_name, self.benchmark.torch_model(source_name)
+                )
+                target_model = models.setdefault(
+                    target_name, self.benchmark.torch_model(target_name)
+                )
                 source_transform = create_transform(
                     **resolve_data_config(source_model.pretrained_cfg)
                 )
@@ -196,7 +203,10 @@ class Experiment:
 
                 # Compute the distance
                 score = distance(source_repr, target_repr)
+                scores[fingerprint].append((source_name, target_name, score))
                 print(score)
+
+        return scores
 
 
 T = TypeVar("T")

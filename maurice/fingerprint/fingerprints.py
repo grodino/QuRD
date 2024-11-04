@@ -1,11 +1,15 @@
-from enum import Enum
 from typing import Literal
 
-from maurice.fingerprint.distance import cosine, hamming
 
 from .base import OutputRepresentation, QueriesSampler
-from .queries import AdversarialQueries, RandomQueries, RandomNegativeQueries
-from .representation import ZLIME, DecisionDistanceVector, HardLabels
+from .queries import (
+    AdversarialQueries,
+    RandomQueries,
+    RandomNegativeQueries,
+    BoundaryQueries,
+)
+from .representation import ZLIME, DecisionDistanceVector, HardLabels, SAC
+from .distance import cosine, hamming, l2
 
 
 Fingerprint = Literal["AKH", "ModelDiff", "ZestOfLIME"]
@@ -33,6 +37,23 @@ def make_fingerprint(
             hard_labels=False, batch_size=batch_size, device=device
         )
         distance = cosine
+
+    elif name == "SAC":
+        sampler = RandomNegativeQueries(
+            augment=True, device=device, batch_size=batch_size
+        )
+        representation = SAC(batch_size=batch_size, device=device)
+        distance = l2
+
+    elif name == "IPGuard":
+        sampler = BoundaryQueries(batch_size=batch_size, device=device)
+        representation = HardLabels(batch_size=batch_size, device=device)
+        distance = hamming
+
+    elif name == "Random":
+        sampler = RandomQueries()
+        representation = HardLabels(batch_size=batch_size, device=device)
+        distance = hamming
 
     else:
         raise NotImplementedError(f"Fingerprint {name} not implemented")
