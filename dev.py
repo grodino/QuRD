@@ -18,7 +18,7 @@ from maurice.fingerprint.fingerprints import make_fingerprint
 class Experiment:
     """Run a fingerprint evaluation benchmark
 
-    - Cache the queries and representations if asked to
+    - Cache the queries and representations
     - Manage model loading
     - Compute the desired metrics
     """
@@ -110,101 +110,114 @@ class Experiment:
 
         return datasets_accuracies
 
-    def evaluate(
+    def scores(
         self,
         fingerprints: dict[str, tuple[QueriesSampler, OutputRepresentation]],
         budget: int,
     ):
-        """Run the fingerprints on the benchmark and evaluate them.
+        """Run the fingerprints on the benchmark and compute the fingerprinting
+        scores.
 
-        - It caches the queries that are sampled by the `QuerySampler` of
-          each fingerprint. The cache is shared accross fingerprints. That is,
-          if two fingerprints have the same queries sampler (with the same
-          parameters) then they will have the same queries. This allows to make
-          sure that two competing fingerprints that share the same sampler also
-          share the randomness.
+        - It caches the queries that are sampled by the `QuerySampler` of each
+          fingerprint. The cache is shared accross fingerprints. That is, if two
+          fingerprints have the same queries sampler (with the same parameters)
+          then they will have the same queries. This allows to make sure that
+          two competing fingerprints that share the same sampler also share the
+          randomness.
         - It caches the representations similarly.
         """
 
-        dataset_name = "SDog120"
-        dataset = self.benchmark.dataset(dataset_name)
-        scores: dict[str, list[tuple[str, str, float]]] = {}
+        scores: dict[str, dict[str, list[tuple[str, str, float]]]] = {}
         models = {}
 
-        for fingerprint, (sampler, representation, distance) in fingerprints.items():
-            scores[fingerprint] = []
+        for dataset_name in self.benchmark.base_models:
+            dataset = self.benchmark.dataset(dataset_name)
+            scores[dataset_name] = {}
 
-            for source_name, target_name in self.benchmark.pairs(dataset_name):
-                source_model = models.setdefault(
-                    source_name, self.benchmark.torch_model(source_name)
-                )
-                target_model = models.setdefault(
-                    target_name, self.benchmark.torch_model(target_name)
-                )
-                source_transform = create_transform(
-                    **resolve_data_config(source_model.pretrained_cfg)
-                )
-                target_transform = create_transform(
-                    **resolve_data_config(target_model.pretrained_cfg)
-                )
+            for fingerprint, (
+                sampler,
+                representation,
+                distance,
+            ) in fingerprints.items():
+                scores[fingerprint] = []
 
-                # Compute the queries
-                queries_path: Path = (
-                    self.dir
-                    / self.benchmark.__class__.__name__
-                    / dataset_name
-                    / "queries"
-                    / str(sampler)
-                    / (source_name + ".pickle")
-                )
-                queries = _load_or_compute(
-                    lambda: sampler.sample(
-                        dataset=dataset,
-                        budget=budget,
-                        source_model=source_model,
-                        source_transform=source_transform,
-                    ),
-                    queries_path,
-                )
+                for source_name, target_name in self.benchmark.pairs(dataset_name):
+                    source_model = models.setdefault(
+                        source_name, self.benchmark.torch_model(source_name)
+                    )
+                    target_model = models.setdefault(
+                        target_name, self.benchmark.torch_model(target_name)
+                    )
+                    source_transform = create_transform(
+                        **resolve_data_config(source_model.pretrained_cfg)
+                    )
+                    target_transform = create_transform(
+                        **resolve_data_config(target_model.pretrained_cfg)
+                    )
 
-                # Compute the source representation
-                source_repr_path: Path = (
-                    self.dir
-                    / self.benchmark.__class__.__name__
-                    / dataset_name
-                    / "representation"
-                    / str(representation)
-                    / source_name
-                    / "source.pickle"
-                )
-                source_repr = _load_or_compute(
-                    lambda: representation(
-                        queries=queries, model=source_model, transform=source_transform
-                    ),
-                    source_repr_path,
-                )
+                    # Compute the queries
+                    queries_path: Path = (
+                        self.dir
+                        / self.benchmark.__class__.__name__
+                        / dataset_name
+                        / "queries"
+                        / str(sampler)
+                        / (source_name + ".pickle")
+                    )
+                    queries = _load_or_compute(
+                        lambda: sampler.sample(
+                            dataset=dataset,
+                            budget=budget,
+                            source_model=source_model,
+                            source_transform=source_transform,
+                        ),
+                        queries_path,
+                    )
 
-                # Compute the target representation
-                target_repr_path: Path = (
-                    self.dir
-                    / self.benchmark.__class__.__name__
-                    / dataset_name
-                    / "representation"
-                    / str(representation)
-                    / source_name
-                    / (target_name + ".pickle")
-                )
-                target_repr = _load_or_compute(
-                    lambda: representation(
-                        queries=queries, model=target_model, transform=target_transform
-                    ),
-                    target_repr_path,
-                )
+                    # Compute the source representation
+                    source_repr_path: Path = (
+                        self.dir
+                        / self.benchmark.__class__.__name__
+                        / dataset_name
+                        / "representation"
+                        / str(representation)
+                        / source_name
+                        / "source.pickle"
+                    )
+                    source_repr = _load_or_compute(
+                        lambda: representation(
+                            queries=queries,
+                            model=source_model,
+                            transform=source_transform,
+                        ),
+                        source_repr_path,
+                    )
 
-                # Compute the distance
-                score = distance(source_repr, target_repr)
-                scores[fingerprint].append((source_name, target_name, score))
-                print(score)
+                    # Compute the target representation
+                    target_repr_path: Path = (
+                        self.dir
+                        / self.benchmark.__class__.__name__
+                        / dataset_name
+                        / "representation"
+                        / str(representation)
+                        / source_name
+                        / (target_name + ".pickle")
+                    )
+                    target_repr = _load_or_compute(
+                        lambda: representation(
+                            queries=queries,
+                            model=target_model,
+                            transform=target_transform,
+                        ),
+                        target_repr_path,
+                    )
+
+                    # Compute the distance
+                    score = distance(source_repr, target_repr)
+                    scores[dataset_name][fingerprint].append(
+                        (source_name, target_name, score)
+                    )
+                    print(score)
 
         return scores
 
@@ -246,7 +259,7 @@ benchmark = ModelReuse(data_dir=DATA_DIR, models_dir=MODELS_DIR, device=DEVICE)
 runner = Experiment(benchmark, GENERATED_DIR, 8, "cpu")
 # runner.compute_accuracy("SDog120")
 
-runner.evaluate(
+runner.scores(
     {
         "AKH": make_fingerprint("AKH", batch_size=8, device=DEVICE),
         "ModelDiff": make_fingerprint("ModelDiff", batch_size=8, device=DEVICE),
@@ -254,20 +267,3 @@ runner.evaluate(
     },
     budget=10,
 )
-
-# model_name = next(benchmark.list_models("SDog120"))
-# model = benchmark.torch_model(model_name)
-# transform = create_transform(**resolve_data_config(model.pretrained_cfg))
-
-# print(transform)
-
-# dataset = benchmark.dataset("SDog120")
-
-# sampler, representation = make_fingerprint(
-#     "AKH", source_model=model, source_transform=transform, batch_size=64, device=DEVICE
-# )
-
-# queries = sampler.sample(dataset, budget=10)
-# rpz = representation(queries, model, transform=transform)
-
-# print("OK")

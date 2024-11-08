@@ -82,7 +82,7 @@ class Benchmark(ABC):
         ...
 
     @abstractmethod
-    def pairs(self) -> Iterable[tuple[str, str]]:
+    def pairs(self, dataset: str | None = None) -> Iterable[tuple[str, str]]:
         """List all the possible (source_model, target_model) pairs"""
         ...
 

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from torch import nn
 import torch
@@ -57,6 +57,9 @@ class SACBenchmark(Benchmark):
         + [f"probit_extraction(mobilenet_v2,{15 + seed})" for seed in range(5)]
     )}
     # fmt: on
+
+    def pairs(self, dataset: str | None = None) -> Iterable[tuple[str, str]]:
+        raise NotImplementedError()
 
     def list_models(self, dataset: str = "CIFAR10") -> Iterator[str]:
         for base_model_name in self.base_models[dataset]:

@@ -1,4 +1,4 @@
-from itertools import combinations, permutations, product
+from itertools import permutations
 from pathlib import Path
 from typing import Iterable, Iterator
 
@@ -47,7 +47,14 @@ class ModelReuse(Benchmark):
 
     n_classes = {"Flower102": 102, "SDog120": 120, "imagenet-1k": 1_000}
 
-    def pairs(self, dataset: str) -> Iterable[tuple[nn.Module, nn.Module]]:
+    def pairs(
+        self, dataset: str | None = None
+    ) -> Iterable[tuple[nn.Module, nn.Module]]:
+        if dataset is None:
+            raise NotImplementedError(
+                "For now, pairs can only be built from models built for the same dataset"
+            )
+
         yield from permutations(self.list_models(dataset), 2)
 
     def list_models(
