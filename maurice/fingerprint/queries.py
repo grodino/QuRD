@@ -420,7 +420,6 @@ def find_negatives(
         if total_negatives > limit:
             break
 
-    model.cpu()
     dataset.transform = None
 
     # Gather all queries (and labels)
