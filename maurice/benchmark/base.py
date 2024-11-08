@@ -40,6 +40,10 @@ class Benchmark(ABC):
             datasets = [datasets]
 
         for dataset in datasets:
+            # FIXME: add a trust_remote_code option to timmm
+            if dataset == "imagenet-1k":
+                continue
+
             # Download the datasets
             _ = get_dataset(
                 dataset,
