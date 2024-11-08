@@ -40,9 +40,9 @@ class Benchmark(ABC):
             datasets = [datasets]
 
         for dataset in datasets:
-            # FIXME: add a trust_remote_code option to timmm
-            if dataset == "imagenet-1k":
-                continue
+            # Download the models
+            for model in self.list_models(dataset):
+                model = self.torch_model(model)
 
             # Download the datasets
             _ = get_dataset(
@@ -59,10 +59,6 @@ class Benchmark(ABC):
                 transform=None,
                 download=True,
             )
-
-            # Download the models
-            for model in self.list_models(dataset):
-                model = self.torch_model(model)
 
     def dataset(
         self,
@@ -81,7 +77,7 @@ class Benchmark(ABC):
         return dataset
 
     @abstractmethod
-    def list_models(self, dataset: str = "CIFAR10") -> Iterator[str]:
+    def list_models(self, dataset: str = "CIFAR10") -> Iterable[str]:
         """Lists all the models used in the benchmark, by their name"""
         ...
 

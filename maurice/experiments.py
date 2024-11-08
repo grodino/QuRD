@@ -6,6 +6,7 @@ import json
 
 from timm.data import create_transform, resolve_data_config
 import torch
+from torch import nn
 from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
 
@@ -44,10 +45,6 @@ class Experiment:
         datasets_accuracies = {}
 
         for dataset_name in datasets:
-            # FIXME: remove
-            if dataset_name == "imagenet-1k":
-                continue
-
             # Prepare where the results will be stored
             save_path = (
                 self.dir
@@ -64,8 +61,10 @@ class Experiment:
 
             for model_name in self.benchmark.list_models(dataset_name):
                 # Check that the accuracy was not already computed
-                if "model_name" in models_accuracy:
+                if model_name in models_accuracy:
                     continue
+
+                print(model_name)
 
                 model = self.benchmark.torch_model(model_name, jit=jit)
 
@@ -141,13 +140,16 @@ class Experiment:
                 representation,
                 distance,
             ) in fingerprints.items():
-                scores[fingerprint] = []
+                print(fingerprint)
+                scores[dataset_name][fingerprint] = []
 
                 for source_name, target_name in self.benchmark.pairs(dataset_name):
-                    source_model = models.setdefault(
+                    print(source_name, target_name)
+
+                    source_model: nn.Module = models.setdefault(
                         source_name, self.benchmark.torch_model(source_name)
                     )
-                    target_model = models.setdefault(
+                    target_model: nn.Module = models.setdefault(
                         target_name, self.benchmark.torch_model(target_name)
                     )
                     source_transform = create_transform(
@@ -156,6 +158,8 @@ class Experiment:
                     target_transform = create_transform(
                         **resolve_data_config(target_model.pretrained_cfg)
                     )
+                    source_model = source_model.to(self.device)
+                    target_model = target_model.to(self.device)
 
                     # Compute the queries
                     queries_path: Path = (
@@ -220,6 +224,10 @@ class Experiment:
                         (source_name, target_name, score)
                     )
                     print(score)
+
+                    # Unload models from the GPU
+                    source_model.cpu()
+                    target_model.cpu()
 
         return scores
 
