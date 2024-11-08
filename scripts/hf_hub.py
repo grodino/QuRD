@@ -1,24 +1,31 @@
-from itertools import islice
+# fmt: off
+# Quikfix while maurice is not pip installed
+import sys
+sys.path.append("../maurice")
+# fmt: on
+
 from pathlib import Path
 import shutil
-from time import perf_counter
-from typing import Any
 
-from huggingface_hub import create_collection, add_collection_item
+from huggingface_hub import (
+    create_collection,
+    add_collection_item,
+    get_collection,
+    update_repo_settings,
+)
 from datasets import load_dataset, Features, Image, ClassLabel
 from timm.models import push_to_hf_hub
-from timm.data import create_dataset
 import torch
 from scipy.io import loadmat
 import polars as pl
+import typer
 
+from maurice.benchmark import get_benchmark
 from maurice.benchmark.base import Benchmark
-from maurice.benchmark.sac import SACBenchmark
 from maurice.benchmark.utils import to_hf_name
-from maurice.benchmark.model_reuse import ModelReuse
 
 
-def upload_benchmark(name: str, description: str, benchmark: Benchmark):
+def _upload_benchmark(name: str, description: str, benchmark: Benchmark):
     """Assuming the models were downloaded to the right folder, upload them to
     huggingface"""
 
@@ -46,7 +53,6 @@ def upload_benchmark(name: str, description: str, benchmark: Benchmark):
 
             model_id = f"maurice-fp/{name}-{to_hf_name(model_name)}"
 
-            # delete_repo(model_id, missing_ok=True)
             print(model_id)
             push_to_hf_hub(model, model_id, private=True)
             add_collection_item(
@@ -57,11 +63,11 @@ def upload_benchmark(name: str, description: str, benchmark: Benchmark):
             )
 
 
-def validate_upload(benchmark: Benchmark, delete_after_download: bool = False):
+def _validate_upload(benchmark: Benchmark, delete_after_download: bool = False):
     for dataset in benchmark.base_models.keys():
         for i, model_name in enumerate(benchmark.list_models(dataset)):
             print(i, model_name, end="")
-            model = benchmark.torch_model(model_name, jit=True)
+            model = benchmark.torch_model(model_name)
             print(model.pretrained_cfg["hf_hub_id"])
 
             data = torch.randn((10, *model.pretrained_cfg["input_size"]))
@@ -76,6 +82,23 @@ def validate_upload(benchmark: Benchmark, delete_after_download: bool = False):
                 shutil.rmtree(cache_dir)
 
 
+app = typer.Typer()
+
+
+@app.command()
+def upload_benchmark(name: str, dir: Path):
+    """Upload a benchmark to the huggingface hub
+
+    NOTE: for now it ignores quantized models
+    """
+    benchmark, description = get_benchmark(
+        name, data_dir=None, models_dir=dir, device="cpu", with_description=True
+    )
+    _upload_benchmark(name, description, benchmark)
+    _validate_upload(benchmark, delete_after_download=True)
+
+
+@app.command()
 def sdogs_to_hfds(data_dir: Path, to: Path, hub_id: str):
     """Converts the StanfordDogs dataset to the hugginface dataset format.
 
@@ -141,30 +164,14 @@ def sdogs_to_hfds(data_dir: Path, to: Path, hub_id: str):
     dataset.push_to_hub(hub_id)
 
 
+@app.command()
+def toggle_visibility(collection_slug: str, private: bool = True):
+    collection = get_collection(collection_slug)
+
+    for model in collection.items:
+        print(model)
+        update_repo_settings(repo_id=model.item_id, private=private)
+
+
 if __name__ == "__main__":
-    # Export the Stanford Dogs Dataset to the huggingface hub
-    sdogs_to_hfds(
-        Path("data/SDog120"), Path("data/hf-SDog120"), "maurice-fp/stanford-dogs"
-    )
-
-    # Upload the ModelReuse and SAC benchmarks to the huggingface hub
-    model_reuse = ModelReuse(device="cpu", models_dir=Path("models/ModelDiff"))
-    sac_benchmark = SACBenchmark(
-        device="cpu",
-        models_dir=Path(
-            "/lustre/fswork/projects/rech/ggl/uvm54nl/Maurice/SACBenchmark/"
-        ),
-    )
-
-    upload_benchmark(
-        name="ModelReuse",
-        description="Original paper: ModelDiff: Testing-Based DNN Similarity Comparison for Model Reuse Detection",
-        benchmark=model_reuse,
-    )
-    upload_benchmark(
-        name="SACBenchmark",
-        description="Original paper: Are You Stealing My Model? Sample Correlation for Fingerprinting Deep Neural Networks",
-        benchmark=sac_benchmark,
-    )
-    validate_upload(model_reuse)
-    validate_upload(sac_benchmark, delete_after_download=True)
+    app()
