@@ -94,7 +94,7 @@ class Experiment:
 
                 # Run the inference
                 for images, labels in test_loader:
-                    images.to(self.device)
+                    images = images.to(self.device)
                     preds: torch.Tensor = model(images).argmax(dim=-1)
 
                     acc = accuracy(preds, labels.to(self.device))
