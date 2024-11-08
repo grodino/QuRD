@@ -17,7 +17,7 @@ cpuonly = { version = ">=2.0", channel = "pytorch" }
 torchmetrics = ">=1.4.2,<2"
 huggingface_hub = ">=0.26.2"
 polars = ">=1.9.0,<2"
-timm = ">=1.0.11,<2"
+# timm = ">=1.0.11,<2"
 scikit-image = ">=0.24.0,<0.25"
 numba = ">=0.60.0,<0.61"
 foolbox = ">=3.3.1,<4"
@@ -29,4 +29,5 @@ pip = "*"
 datasets = ">=2.19.2,<3"
 
 [pypi-dependencies]
+timm = { path = "./pytorch-image-models", editable = true }
 py-spy = ">=0.4.0, <0.5"
