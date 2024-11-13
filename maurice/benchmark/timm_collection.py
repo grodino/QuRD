@@ -67,6 +67,7 @@ class TimmCollection(Benchmark):
 
     def pairs(self, dataset: str = "imagenet-1k") -> Iterable[tuple[str, str]]:
         yield from permutations(self.list_models(dataset), 2)
+        yield from zip(self.list_models(dataset), self.list_models(dataset))
 
     def torch_model(
         self, model_name: str, from_disk: bool = False, jit: bool = False

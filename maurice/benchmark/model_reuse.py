@@ -56,6 +56,7 @@ class ModelReuse(Benchmark):
             )
 
         yield from permutations(self.list_models(dataset), 2)
+        yield from zip(self.list_models(dataset), self.list_models(dataset))
 
     def list_models(
         self, dataset: str = "Flower102", jit: bool = False
