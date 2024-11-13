@@ -1,7 +1,7 @@
 from multiprocessing import cpu_count
 from pathlib import Path
 import pickle
-from typing import Callable, Iterable, TypeVar
+from typing import Any, Callable, Iterable, TypeVar
 import json
 
 from timm.data import create_transform, resolve_data_config
@@ -9,6 +9,7 @@ import torch
 from torch import nn
 from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
+from torchvision.transforms import v2
 
 from maurice.benchmark.base import Benchmark
 from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
@@ -128,12 +129,11 @@ class Experiment:
         - It caches the representations similarly.
         """
 
-        scores: dict[str, dict[str, list[tuple[str, str, float]]]] = {}
+        scores: list[dict[str, Any]] = []
         models = {}
 
         for dataset_name in self.benchmark.base_models:
             dataset = self.benchmark.dataset(dataset_name)
-            scores[dataset_name] = {}
 
             for fingerprint, (
                 sampler,
@@ -141,7 +141,6 @@ class Experiment:
                 distance,
             ) in fingerprints.items():
                 print(fingerprint)
-                scores[dataset_name][fingerprint] = []
 
                 for source_name, target_name in self.benchmark.pairs(dataset_name):
                     print(source_name, target_name)
@@ -160,6 +159,17 @@ class Experiment:
                     )
                     source_model = source_model.to(self.device)
                     target_model = target_model.to(self.device)
+
+                    # Set the transform of the dataset to be that of the
+                    # source_model
+                    #
+                    # TODO: think real good about the tranforms.
+                    # The issue is the normalizaztion step ? Check when we
+                    # normalize image to source then to target it changes the
+                    # accuracy of the model
+                    #
+                    # TODO: normalize the source/target model names before saving
+                    dataset.transform = source_transform
 
                     # Compute the queries
                     queries_path: Path = (
@@ -220,10 +230,17 @@ class Experiment:
 
                     # Compute the distance
                     score = distance(source_repr, target_repr)
-                    scores[dataset_name][fingerprint].append(
-                        (source_name, target_name, score)
+
+                    # Save the scores
+                    scores.append(
+                        dict(
+                            dataset=dataset_name,
+                            fingerprint=fingerprint,
+                            source=source_name,
+                            target=target_name,
+                            score=score,
+                        )
                     )
-                    print(score)
 
                     # Unload models from the GPU
                     source_model.cpu()
