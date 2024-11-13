@@ -27,6 +27,8 @@ typer-slim = ">=0.13.0,<0.14"
 ipykernel = "*"
 pip = "*"
 datasets = ">=2.19.2,<3"
+scikit-learn = ">=1.5.2,<2"
+plotly = ">=5.24.1,<6"
 
 [pypi-dependencies]
 timm = { path = "./pytorch-image-models", editable = true }

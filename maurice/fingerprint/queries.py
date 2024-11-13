@@ -27,7 +27,7 @@ class RandomQueries(QueriesSampler):
         self.subsample = subsample
 
     def sample(
-        self, dataset: Dataset, budget: int
+        self, dataset: Dataset, budget: int, **kwargs
     ) -> torch.Tensor | tuple[torch.Tensor, list[torch.Tensor]]:
         if self.subsample:
             assert (
@@ -376,17 +376,17 @@ def get_normalize_params(transform: Transform) -> dict[str, list[float] | float]
 def find_negatives(
     dataset: Dataset,
     model: nn.Module,
-    transform: Transform,
     limit: int,
     batch_size: int,
     device: str,
+    transform: Transform | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Return the images (and corresponding labels) in the `dataset` that are
     wrongly classified by the provided `model`"""
 
-    assert (
-        dataset.transform is None
-    ), "The dataset must have no transform as transforms are handeld by the query sampler"
+    # assert (
+    #     dataset.transform is None
+    # ), "The dataset must have no transform as transforms are handeld by the query sampler"
 
     transform, normalize = split_transform(transform)
     dataset.transform = transform
