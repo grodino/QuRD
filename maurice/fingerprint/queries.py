@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
-from torchvision.transforms.v2 import CutMix, Compose, Transform, Normalize
+from torchvision.transforms import v2, Compose, Normalize
 from torchvision.transforms.v2 import functional as VF
 
 from .base import QueriesSampler
@@ -109,7 +109,7 @@ class RandomNegativeQueries(QueriesSampler):
         dataset: Dataset,
         budget: int,
         source_model: nn.Module,
-        source_transform: Transform,
+        source_transform: v2.Transform,
     ) -> torch.Tensor | tuple[torch.Tensor, list[torch.Tensor]]:
         if self.subsample:
             assert (
@@ -135,7 +135,7 @@ class RandomNegativeQueries(QueriesSampler):
             # CutMix_flipped_h + CutMix_flipped_v
             n_cutmix = ceil((budget - n_candidates) / (n_candidates * 3))
 
-            cutmix = CutMix(alpha=1.0, num_classes=self.num_classes)
+            cutmix = v2.CutMix(alpha=1.0, num_classes=self.num_classes)
             subsampled_queries = [candidate_queries]
 
             for _ in range(n_cutmix):
@@ -199,7 +199,7 @@ class AdversarialQueries(RandomQueries):
         dataset: Dataset,
         budget: int,
         source_model: nn.Module,
-        source_transform: Transform,
+        source_transform: v2.Transform,
     ):
         seeds = super().sample(dataset, budget // 2)
 
@@ -244,7 +244,7 @@ class BoundaryQueries(RandomQueries):
         dataset: Dataset,
         budget: int,
         source_model: nn.Module | None = None,
-        source_transform: Transform | None = None,
+        source_transform: v2.Transform | None = None,
     ):
         if prepocessing := get_normalize_params(source_transform):
             self.preprocessing = prepocessing
@@ -323,7 +323,7 @@ class BoundaryQueries(RandomQueries):
 
 
 class AdversarialNegativeQueries(RandomNegativeQueries):
-    def __init__(self, *args, source_transform: Transform, **kwargs):
+    def __init__(self, *args, source_transform: v2.Transform, **kwargs):
         super().__init__(*args, source_transform=source_transform, **kwargs)
 
         if prepocessing := get_normalize_params(source_transform):
@@ -356,18 +356,20 @@ class AdversarialNegativeQueries(RandomNegativeQueries):
         return seeds, adversarial
 
 
-def get_normalize_params(transform: Transform) -> dict[str, list[float] | float] | None:
+def get_normalize_params(
+    transform: v2.Transform,
+) -> dict[str, list[float] | float] | None:
     """Get the parameters of the Normalization in the transform (which can be a
     composition of other transforms and a normalization) to be used by foolbox"""
 
-    if isinstance(transform, Compose):
+    if isinstance(transform, (v2.Compose, Compose)):
         for step in transform.transforms:
-            if isinstance(step, Normalize):
+            if isinstance(step, (v2.Normalize, Normalize)):
                 return {"mean": step.mean, "std": step.std, "axis": -3}
 
         return None
 
-    elif isinstance(transform, Normalize):
+    elif isinstance(transform, (v2.Normalize, Normalize)):
         return {"mean": transform.mean, "std": transform.std, "axis": -3}
 
     return None
@@ -379,7 +381,7 @@ def find_negatives(
     limit: int,
     batch_size: int,
     device: str,
-    transform: Transform | None = None,
+    transform: v2.Transform | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Return the images (and corresponding labels) in the `dataset` that are
     wrongly classified by the provided `model`"""
