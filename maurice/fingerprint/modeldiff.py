@@ -37,6 +37,9 @@ def find_adversarial(
 
     prev_device = images.device
 
+    preprocessing["mean"] = torch.Tensor(preprocessing["mean"]).to(device)
+    preprocessing["std"] = torch.Tensor(preprocessing["std"]).to(device)
+
     # Construct the foolbox object to generate the adversarial examples
     model = model.eval()
     fmodel = fb.models.pytorch.PyTorchModel(
@@ -62,6 +65,7 @@ def find_adversarial(
     for image, label in zip(normed_images, labels):
         image = image.to(device)
         label = label.to(device)
+        print(label.device, image.device, fmodel.device)
 
         raw, _, _ = attack(fmodel, image, label, epsilons=0.03)
         raw_adversarial.append(raw.cpu())
