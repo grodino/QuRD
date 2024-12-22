@@ -4,6 +4,8 @@ from typing import Iterable, Iterator
 
 from torch import nn
 import torch
+from torch.nn.utils import prune
+import torch.utils
 import torchvision
 import polars as pl
 from timm.models import load_state_dict_from_hf, load_model_config_from_hf
@@ -182,7 +184,20 @@ class SACBenchmark(Benchmark):
             }
         else:
             model_id = f"maurice-fp/SACBenchmark-{to_hf_name(model_name)}"
-            model.load_state_dict(load_state_dict_from_hf(model_id))
+            state_dict = load_state_dict_from_hf(model_id)
+
+            # Setup the model so that it can load weights and pruning masks
+            if variation == "fineprune":
+                for mask_name in filter(
+                    lambda k: k.endswith("_mask"), state_dict.keys()
+                ):
+                    param_name, weight_name = mask_name.rsplit(".", 1)
+                    weight_name = weight_name.replace("_mask", "")
+
+                    parts = param_name.split(".")
+                    prune.identity(getattr(model, parts[0])[int(parts[1])], weight_name)
+
+            model.load_state_dict(state_dict)
             model.pretrained_cfg, _, _ = load_model_config_from_hf(model_id)
 
         if jit:
