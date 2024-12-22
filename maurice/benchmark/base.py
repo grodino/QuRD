@@ -42,7 +42,8 @@ class Benchmark(ABC):
         for dataset in datasets:
             # Download the models
             for model in self.list_models(dataset):
-                model = self.torch_model(model)
+                print(model)
+                _ = self.torch_model(model)
 
             # Download the datasets
             _ = get_dataset(

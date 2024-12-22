@@ -18,6 +18,7 @@ from numba import njit
 
 from maurice.benchmark import get_benchmark
 
+from maurice.experiments import Experiment
 from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
 from maurice.fingerprint.queries import (
     AdversarialNegativeQueries,
@@ -324,44 +325,30 @@ def list_models(
 
 
 @app.command()
-def prepare(benchmark: str = "DefendedBenchmark", dataset: DatasetName = "CIFAR10"):
-    """Download the dataset and the corresponding models"""
+def prepare(benchmark: str):
+    """Download the benchmark models and datasets"""
 
     info("Preparing benchmark")
-    info(f"{benchmark = }, {dataset = }")
-
     bench = get_benchmark(
         benchmark, state["data_dir"], state["models_dir"], state["device"]
     )
-    bench.prepare(dataset)
+    bench.prepare()
 
 
 @app.command()
-def accuracy(benchmark: str = "DefendedBenchmark", dataset: DatasetName = "CIFAR10"):
+def eval_models(benchmark: str):
     """Print the accuracy of all the models and their variations"""
 
     bench = get_benchmark(
         benchmark, state["data_dir"], state["models_dir"], state["device"]
     )
-    records = []
-
-    for model_name in bench.list_models(dataset=dataset):
-        info(model_name)
-        records.append(
-            {
-                "model": model_name,
-                "accuracy": bench.test(
-                    model_name, dataset, batch_size=state["batch_size"]
-                ),
-                "dataset": dataset,
-            }
-        )
-        info(records[-1])
-
-    (state["generated_dir"] / dataset).mkdir(exist_ok=True, parents=True)
-    pl.from_records(records).write_csv(
-        state["generated_dir"] / dataset / "accuracy.csv"
+    runner = Experiment(
+        bench,
+        dir=state["generated_dir"],
+        batch_size=state["batch_size"],
+        device=state["device"],
     )
+    runner.eval_models()
 
 
 @app.command()
@@ -908,10 +895,12 @@ def pair_distance(
 
 @app.callback()
 def main(
-    data_dir: Path = DEFAULT_DATA_DIR,
-    models_dir: Path = DEFAULT_MODELS_DIR,
-    generated_dir: Path = DEFAULT_GENERATED_DIR,
-    device: str = DEFAULT_DEVICE,
+    data_dir: Annotated[Path, typer.Option(envvar="DATA_DIR")] = DEFAULT_DATA_DIR,
+    models_dir: Annotated[Path, typer.Option(envvar="MODELS_DIR")] = DEFAULT_MODELS_DIR,
+    generated_dir: Annotated[
+        Path, typer.Option(envvar="GENERATED_DIR")
+    ] = DEFAULT_GENERATED_DIR,
+    device: Annotated[str, typer.Option(envvar="DEVICE")] = DEFAULT_DEVICE,
     seed: int = 123456789,
     batch_size: int = 128,
     verbose: bool = False,

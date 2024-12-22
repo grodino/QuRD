@@ -1,6 +1,7 @@
 from multiprocessing import cpu_count
 from pathlib import Path
 import pickle
+from time import perf_counter
 from typing import Any, Callable, Iterable, TypeVar
 import json
 
@@ -9,6 +10,7 @@ import torch
 from torch import nn
 from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
+import torchvision
 from torchvision.transforms import v2
 
 from maurice.benchmark.base import Benchmark
@@ -31,7 +33,7 @@ class Experiment:
         self.device = device
         self.dir = dir
 
-    def compute_accuracy(
+    def eval_models(
         self, datasets: Iterable[str] | str | None = None, jit: bool = False
     ):
         """Compute the accuracy of the models in the benchmark.
@@ -46,6 +48,7 @@ class Experiment:
         datasets_accuracies = {}
 
         for dataset_name in datasets:
+
             # Prepare where the results will be stored
             save_path = (
                 self.dir
@@ -61,11 +64,13 @@ class Experiment:
                 models_accuracy = {}
 
             for model_name in self.benchmark.list_models(dataset_name):
-                # Check that the accuracy was not already computed
-                if model_name in models_accuracy:
-                    continue
+                start = perf_counter()
 
-                print(model_name)
+                # Check that the accuracy was not already computed
+                # if model_name in models_accuracy:
+                #     continue
+
+                print(model_name, end="...", flush=True)
 
                 model = self.benchmark.torch_model(model_name, jit=jit)
 
@@ -73,31 +78,38 @@ class Experiment:
                 transform = create_transform(
                     **resolve_data_config(model.pretrained_cfg)
                 )
+
+                # TODO: speedup dataset loading by loading dataset once, and
+                # just changing the transform every time
                 dataset = self.benchmark.dataset(dataset_name, transform=transform)
                 test_loader = DataLoader(
                     dataset,
                     batch_size=self.batch_size,
-                    num_workers=cpu_count() // 4,
+                    num_workers=4,
                     pin_memory=True,
                 )
 
+                device = self.device
+                if "quantize" in model_name:
+                    device = "cpu"
+
                 # Send model to device
                 model.eval()
-                model.to(self.device)
+                model.to(device)
 
                 # Prepare the metric
                 accuracy = Accuracy(
                     task="multiclass",
                     num_classes=model.pretrained_cfg["num_classes"],
                     top_k=1,
-                ).to(self.device)
+                ).to(device)
 
                 # Run the inference
                 for images, labels in test_loader:
-                    images = images.to(self.device)
+                    images = images.to(device)
                     preds: torch.Tensor = model(images).argmax(dim=-1)
 
-                    acc = accuracy(preds, labels.to(self.device))
+                    acc = accuracy(preds, labels.to(device))
 
                     labels.cpu()
                     preds.cpu()
@@ -107,6 +119,8 @@ class Experiment:
                 model.cpu()
                 models_accuracy[model_name] = accuracy.compute().cpu().item()
                 save_path.write_text(json.dumps(models_accuracy))
+
+                print(f"{perf_counter() - start:.3f} s")
 
             datasets_accuracies[dataset_name] = models_accuracy
 
@@ -160,6 +174,8 @@ class Experiment:
                     source_model = source_model.to(self.device)
                     target_model = target_model.to(self.device)
 
+                    print(f"{self.device = }")
+
                     # Set the transform of the dataset to be that of the
                     # source_model
                     #
@@ -176,7 +192,6 @@ class Experiment:
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / "queries"
                         / str(sampler)
                         / (source_name + ".pickle")
                     )
@@ -189,13 +204,16 @@ class Experiment:
                         ),
                         queries_path,
                     )
+                    torchvision.utils.save_image(
+                        torch.cat(queries), queries_path.with_suffix(".png"), nrow=5
+                    )
 
                     # Compute the source representation
                     source_repr_path: Path = (
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / "representation"
+                        / str(sampler)
                         / str(representation)
                         / source_name
                         / "source.pickle"
@@ -214,7 +232,7 @@ class Experiment:
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / "representation"
+                        / str(sampler)
                         / str(representation)
                         / source_name
                         / (target_name + ".pickle")
