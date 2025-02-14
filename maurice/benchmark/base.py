@@ -77,6 +77,10 @@ class Benchmark(ABC):
         )
         return dataset
 
+    @property
+    def datasets(self) -> list[str]:
+        return list(self.base_models.keys())
+
     @abstractmethod
     def list_models(self, dataset: str = "CIFAR10") -> Iterable[str]:
         """Lists all the models used in the benchmark, by their name"""
