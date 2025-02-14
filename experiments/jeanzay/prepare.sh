@@ -27,6 +27,7 @@ export QURD=$SCRATCH/QuRD
 export GENERATED_DIR=$QURD/generated/
 export MODELS_DIR=$QURD/models/${benchmark}/
 export DATA_DIR=$QURD/data/
+export HF_HUB_OFFLINE=1
 
 # SETUP Huggingface model hub cache directory
 # export HF_HUB_CACHE=$MODELS_DIR

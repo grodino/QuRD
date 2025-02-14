@@ -25,7 +25,9 @@ def make_fingerprint(
         distance = cosine
 
     elif name == "AKH":
-        sampler = RandomNegativeQueries(device=device, batch_size=batch_size)
+        sampler = RandomNegativeQueries(
+            augment=True, device=device, batch_size=batch_size
+        )
         representation = HardLabels(batch_size=batch_size, device=device)
         distance = hamming
 

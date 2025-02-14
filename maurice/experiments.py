@@ -12,6 +12,7 @@ from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
 import torchvision
 from torchvision.transforms import v2
+from tqdm import tqdm
 
 from maurice.benchmark.base import Benchmark
 from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
@@ -70,7 +71,7 @@ class Experiment:
                 # if model_name in models_accuracy:
                 #     continue
 
-                print(model_name, end="...", flush=True)
+                print(model_name, end="... ", flush=True)
 
                 model = self.benchmark.torch_model(model_name, jit=jit)
 
@@ -120,7 +121,9 @@ class Experiment:
                 models_accuracy[model_name] = accuracy.compute().cpu().item()
                 save_path.write_text(json.dumps(models_accuracy))
 
-                print(f"{perf_counter() - start:.3f} s")
+                print(
+                    f"{perf_counter() - start:.3f} s Top1 = {models_accuracy[model_name]:.2f}"
+                )
 
             datasets_accuracies[dataset_name] = models_accuracy
 
@@ -154,10 +157,17 @@ class Experiment:
                 representation,
                 distance,
             ) in fingerprints.items():
-                print(fingerprint)
+                n_pairs = len(list(self.benchmark.pairs(dataset_name)))
+                progress = tqdm(
+                    self.benchmark.pairs(dataset_name),
+                    total=n_pairs,
+                    desc=f"{dataset_name}: {fingerprint}",
+                    position=1,
+                )
 
-                for source_name, target_name in self.benchmark.pairs(dataset_name):
-                    print(source_name, target_name)
+                for source_name, target_name in progress:
+                    progress.display(f"{source_name} vs {target_name}", pos=2)
+                    # print(source_name, target_name)
 
                     source_model: nn.Module = models.setdefault(
                         source_name, self.benchmark.torch_model(source_name)
@@ -171,10 +181,14 @@ class Experiment:
                     target_transform = create_transform(
                         **resolve_data_config(target_model.pretrained_cfg)
                     )
-                    source_model = source_model.to(self.device)
-                    target_model = target_model.to(self.device)
 
-                    print(f"{self.device = }")
+                    # adapt the device for quantized models
+                    source_device = "cpu" if "quantize" in source_name else self.device
+                    target_device = "cpu" if "quantize" in target_name else self.device
+
+                    source_model = source_model.to(source_device)
+                    target_model = target_model.to(target_device)
+                    # print(f"{source_device = }, {target_device = }")
 
                     # Set the transform of the dataset to be that of the
                     # source_model
@@ -192,9 +206,10 @@ class Experiment:
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / str(sampler)
+                        / (str(sampler) + "-" + str(budget))
                         / (source_name + ".pickle")
                     )
+                    sampler.device = source_device
                     queries = _load_or_compute(
                         lambda: sampler.sample(
                             dataset=dataset,
@@ -204,20 +219,22 @@ class Experiment:
                         ),
                         queries_path,
                     )
-                    torchvision.utils.save_image(
-                        torch.cat(queries), queries_path.with_suffix(".png"), nrow=5
-                    )
+                    # # Does not work with some querysamplers
+                    # torchvision.utils.save_image(
+                    #     torch.cat(queries), queries_path.with_suffix(".png"), nrow=5
+                    # )
 
                     # Compute the source representation
                     source_repr_path: Path = (
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / str(sampler)
+                        / (str(sampler) + "-" + str(budget))
                         / str(representation)
                         / source_name
                         / "source.pickle"
                     )
+                    representation.device = source_device
                     source_repr = _load_or_compute(
                         lambda: representation(
                             queries=queries,
@@ -232,11 +249,12 @@ class Experiment:
                         self.dir
                         / self.benchmark.__class__.__name__
                         / dataset_name
-                        / str(sampler)
+                        / (str(sampler) + "-" + str(budget))
                         / str(representation)
                         / source_name
                         / (target_name + ".pickle")
                     )
+                    representation.device = target_device
                     target_repr = _load_or_compute(
                         lambda: representation(
                             queries=queries,
@@ -245,6 +263,9 @@ class Experiment:
                         ),
                         target_repr_path,
                     )
+
+                    source_repr.cpu()
+                    target_repr.cpu()
 
                     # Compute the distance
                     score = distance(source_repr, target_repr)

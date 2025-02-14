@@ -135,7 +135,9 @@ class RandomNegativeQueries(QueriesSampler):
             # CutMix_flipped_h + CutMix_flipped_v
             n_cutmix = ceil((budget - n_candidates) / (n_candidates * 3))
 
-            cutmix = v2.CutMix(alpha=1.0, num_classes=self.num_classes)
+            cutmix = v2.CutMix(
+                alpha=1.0, num_classes=source_model.pretrained_cfg["num_classes"]
+            )
             subsampled_queries = [candidate_queries]
 
             for _ in range(n_cutmix):

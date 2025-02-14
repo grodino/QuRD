@@ -20,6 +20,7 @@ from maurice.benchmark import get_benchmark
 
 from maurice.experiments import Experiment
 from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
+from maurice.fingerprint.fingerprints import make_fingerprint
 from maurice.fingerprint.queries import (
     AdversarialNegativeQueries,
     AdversarialQueries,
@@ -349,6 +350,28 @@ def eval_models(benchmark: str):
         device=state["device"],
     )
     runner.eval_models()
+
+
+@app.command()
+def scores(benchmark: str, fingerprints: list[str], budget: int = 10):
+    bench = get_benchmark(
+        benchmark, state["data_dir"], state["models_dir"], state["device"]
+    )
+    runner = Experiment(
+        bench,
+        dir=state["generated_dir"],
+        batch_size=state["batch_size"],
+        device=state["device"],
+    )
+    runner.scores(
+        {
+            name: make_fingerprint(
+                name, batch_size=state["batch_size"], device=state["device"]
+            )
+            for name in fingerprints
+        },
+        budget=budget,
+    )
 
 
 @app.command()

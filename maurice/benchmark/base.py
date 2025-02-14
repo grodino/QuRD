@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 from torchvision.transforms.v2 import Compose
 import polars as pl
 
-from .utils import get_dataset
+from .data import get_dataset
 
 
 class Benchmark(ABC):
