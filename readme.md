@@ -1,19 +1,35 @@
-Dear reviewers, thank you for looking at the code. Here are instructions to run it and generate the
-paper's figures.
+<p align="center">
+  <img align="center" src="assets/qurd_logo.svg" width="200px" />
+</p>
+<p align="left">
 
-# Setup 
+# Queries, Representations and Detection: The next 100 Model Fingerprinting Schemes
 
-1. Download the ModelDiff's benchmark models from https://github.com/yuanchun-li/ModelDiff
-2. Download the SAC's benchmark models from https://github.com/guanjiyang/SAC
-3. Install the modified version of `timm` using `pip install -e pytorch-image-models`
+QuRD is the framework for implementing, and benchmarking model fingerprinting schemes.
 
-# Run the experiments
+**Do you need to use a fingerprinting schemes?** You might be interested in knowing that...\
+... QuRD makes it easy to 
 
-1. Use the `experiments/scripts/paper.py` to generate the script used to run the experiments of the
-   paper
-2. Execute the script
+**Are you working on fingerprinting schemes?** You might be interested in knowing that...\
+.... QuRD makes it easy to *create new fingerprints*.\
+.... QuRD makes it easy to *create new benchmarks*.\
+.... QuRD makes it easy to *run large scale experiments*.
 
-# Analyze the results
+Here is a simple example that should run a small fingerprinting benchmark on a laptop, without any
+GPU. 
 
-Run the `paper.ipynb` notebook. The results of the experiments used in the paper are in the
-`generated` folder.
+```python
+from qurd.benchmark import get_benchmark
+ 
+smol_bench = get_benchmark("TinyImageNetModels")
+runner = Experiment(smol_bench)
+akh_score = make_fingerprint("AKH")
+
+print(runner.scores(akh, budget=10))
+```
+
+## Installation
+
+Augustin Godinot made the logo from the following SVGs. No AI involved, just plain [Inkscape](https://inkscape.org) gym.
+- https://www.svgrepo.com/svg/220887/fingerprint
+- https://www.svgrepo.com/svg/530364/lemon
