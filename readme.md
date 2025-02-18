@@ -21,7 +21,7 @@ If you have not installed it yet, install pixi `curl -fsSL https://pixi.sh/insta
 Then, clone this repository and run the install command.
 ```bash
 git clone git@github.com:grodino/QuRD.git && cd QuRD
-pixi install # -e gpu if you have a GPU on your machine
+pixi install # -e cuda if you have a GPU on your machine
 ```
 
 ## Quick example

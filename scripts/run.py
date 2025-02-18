@@ -1,3 +1,9 @@
+# fmt: off
+# Quikfix while qurd is not pip installed
+import sys
+sys.path.append("../qurd")
+# fmt: on
+
 import logging
 from logging import info
 from pathlib import Path
