@@ -1,5 +1,5 @@
 import logging
-from logging import info
+from logging import info, warning
 
 from pathlib import Path
 from typing import Annotated, TypedDict
@@ -127,22 +127,6 @@ def main(
     batch_size: int = 128,
     verbose: bool = False,
 ):
-    if data_dir:
-        assert data_dir.exists(), f"The provided data_dir {data_dir} does not exist"
-        state["data_dir"] = data_dir
-
-    if models_dir:
-        assert (
-            models_dir.exists()
-        ), f"The provided models_dir {models_dir.resolve()} does not exist"
-        state["models_dir"] = models_dir
-
-    if generated_dir:
-        generated_dir.mkdir(parents=True, exist_ok=True)
-        state["generated_dir"] = generated_dir
-
-    state["batch_size"] = batch_size
-    state["device"] = device
 
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -153,5 +137,28 @@ def main(
         level=logging.DEBUG if verbose else logging.INFO,
     )
     logging.getLogger("timm").setLevel(logging.WARNING)
+
+    if not data_dir.exists():
+        warning(f"The provided data_dir {data_dir} does not exist, creating it.")
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+    if not models_dir.exists():
+        warning(
+            f"The provided models_dir {models_dir.resolve()} does not exist, creating it."
+        )
+        models_dir.mkdir(parents=True, exist_ok=True)
+
+    if not generated_dir.exists():
+        warning(
+            f"The provided generated_dir {generated_dir.resolve()} does not exist, creating it."
+        )
+        generated_dir.mkdir(parents=True, exist_ok=True)
+
+    state["data_dir"] = data_dir
+    state["models_dir"] = models_dir
+    state["generated_dir"] = generated_dir
+
+    state["batch_size"] = batch_size
+    state["device"] = device
 
     info(f"{state = }")
