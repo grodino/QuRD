@@ -1,11 +1,6 @@
-# fmt: off
-# Quikfix while qurd is not pip installed
-import sys
-sys.path.append("../qurd")
-# fmt: on
-
 import logging
 from logging import info
+
 from pathlib import Path
 from typing import Annotated, TypedDict
 
@@ -36,7 +31,9 @@ DEFAULT_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 app = typer.Typer(
     pretty_exceptions_show_locals=False,
-    help="Benchmark on image data based on the ActiveDiff benchmark (temporary name)",
+    help="Execute fingerprints on a benchmark",
+    no_args_is_help=True,
+    add_completion=False,
 )
 state = State(
     data_dir=DEFAULT_DATA_DIR,
@@ -106,6 +103,7 @@ def scores(benchmark: str, fingerprints: list[str], budget: int = 10):
         batch_size=state["batch_size"],
         device=state["device"],
     )
+    print(1)
     runner.scores(
         {
             name: make_fingerprint(

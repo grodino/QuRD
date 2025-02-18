@@ -1,9 +1,3 @@
-# fmt: off
-# Quikfix while maurice is not pip installed
-import sys
-sys.path.append("../qurd")
-# fmt: on
-
 from pathlib import Path
 import shutil
 
@@ -23,6 +17,13 @@ import typer
 from qurd.benchmark import get_benchmark
 from qurd.benchmark.base import Benchmark
 from qurd.benchmark.utils import to_hf_name
+
+
+app = typer.Typer(
+    help="Upload models of a benchmark to Huggingface",
+    no_args_is_help=True,
+    add_completion=False,
+)
 
 
 def _upload_benchmark(name: str, description: str, benchmark: Benchmark):
@@ -80,9 +81,6 @@ def _validate_upload(benchmark: Benchmark, delete_after_download: bool = False):
                     / f"models--{model.pretrained_cfg['hf_hub_id'].replace('/', '--')}"
                 )
                 shutil.rmtree(cache_dir)
-
-
-app = typer.Typer()
 
 
 @app.command()
