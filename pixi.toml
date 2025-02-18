@@ -32,16 +32,16 @@ timm = ">=1.0.14,<2"
 [feature.cpu.dependencies]
 cpuonly = { version = ">=2.0", channel = "pytorch" }
 
-# [feature.cuda]
-# channels = ["nvidia", { channel = "pytorch", priority = -1 }]
+[feature.cuda]
+channels = ["nvidia", { channel = "pytorch", priority = -1 }]
 
-# [feature.cuda.dependencies]
-# pytorch-cuda = { version = "12.1.*", channel = "pytorch" }
+[feature.cuda.dependencies]
+pytorch-cuda = { version = "12.1.*", channel = "pytorch" }
 
 [pypi-dependencies]
 py-spy = ">=0.4.0, <0.5"
 python-dotenv = ">=1.0.1, <2"
 
 [environments]
-# cuda = ["cuda"]
+cuda = ["cuda"]
 default = ["cpu"]
