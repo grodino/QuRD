@@ -8,7 +8,7 @@ from timm import create_model
 from polars.dataframe import DataFrame
 from huggingface_hub import get_collection
 
-from maurice.benchmark.base import Benchmark
+from .base import Benchmark
 
 
 class TimmCollection(Benchmark):

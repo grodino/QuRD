@@ -20,7 +20,7 @@ QuRD is the framework for implementing, and benchmarking model fingerprinting sc
 If you have not installed it yet, install pixi `curl -fsSL https://pixi.sh/install.sh | bash`.
 Then, clone this repository and run the install command.
 ```bash
-git clone git@github.com:grodino/QuRD.git && cd QurD
+git clone git@github.com:grodino/QuRD.git && cd QuRD
 pixi install # -e gpu if you have a GPU on your machine
 ```
 

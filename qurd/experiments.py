@@ -1,4 +1,3 @@
-from multiprocessing import cpu_count
 from pathlib import Path
 import pickle
 from time import perf_counter
@@ -10,12 +9,10 @@ import torch
 from torch import nn
 from torchmetrics import Accuracy
 from torch.utils.data import DataLoader
-import torchvision
-from torchvision.transforms import v2
 from tqdm import tqdm
 
-from maurice.benchmark.base import Benchmark
-from maurice.fingerprint.base import OutputRepresentation, QueriesSampler
+from .benchmark.base import Benchmark
+from .fingerprint.base import OutputRepresentation, QueriesSampler
 
 
 class Experiment:

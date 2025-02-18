@@ -8,9 +8,9 @@ import typer
 import numpy as np
 from dotenv import load_dotenv
 
-from maurice.experiments import Experiment
-from maurice.benchmark import get_benchmark
-from maurice.fingerprint.fingerprints import make_fingerprint
+from qurd.experiments import Experiment
+from qurd.benchmark import get_benchmark
+from qurd.fingerprint.fingerprints import make_fingerprint
 
 
 class State(TypedDict):

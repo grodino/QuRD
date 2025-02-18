@@ -1,10 +1,8 @@
-from typing import OrderedDict
 from pathlib import Path
 
 from torch.utils.data import Dataset
 from torchvision.datasets import CIFAR10, CIFAR100, Flowers102
 from timm.data import create_dataset
-from datasets import get_dataset_infos
 
 
 def get_dataset(

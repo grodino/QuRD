@@ -1,7 +1,7 @@
 # fmt: off
 # Quikfix while maurice is not pip installed
 import sys
-sys.path.append("../maurice")
+sys.path.append("../qurd")
 # fmt: on
 
 from pathlib import Path
@@ -20,9 +20,9 @@ from scipy.io import loadmat
 import polars as pl
 import typer
 
-from maurice.benchmark import get_benchmark
-from maurice.benchmark.base import Benchmark
-from maurice.benchmark.utils import to_hf_name
+from qurd.benchmark import get_benchmark
+from qurd.benchmark.base import Benchmark
+from qurd.benchmark.utils import to_hf_name
 
 
 def _upload_benchmark(name: str, description: str, benchmark: Benchmark):

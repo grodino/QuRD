@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from maurice.benchmark.analysis import roc_curve, roc_metrics
+from qurd.benchmark.analysis import roc_curve, roc_metrics
 
 import polars as pl
 import plotly.express as px
