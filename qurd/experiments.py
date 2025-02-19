@@ -190,11 +190,6 @@ class Experiment:
                     # Set the transform of the dataset to be that of the
                     # source_model
                     #
-                    # TODO: think real good about the tranforms.
-                    # The issue is the normalizaztion step ? Check when we
-                    # normalize image to source then to target it changes the
-                    # accuracy of the model
-                    #
                     # TODO: normalize the source/target model names before saving
                     dataset.transform = source_transform
 
